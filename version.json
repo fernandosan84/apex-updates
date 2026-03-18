@@ -1,0 +1,16 @@
+{
+  "version": "3.8",
+  "fecha": "2026-03-18",
+  "nota": "Lote por capital corregido, zona optima espigas, panel adaptativo",
+  "url_descarga": "https://raw.githubusercontent.com/fernandosan84/apex-tradin/main/FERNANDO_DERIV_FULL_PRO_v3.8.mq5",
+  "obligatoria": false,
+  "changelog": [
+    "Lote calculado por porcentaje real del capital",
+    "Zona optima de entrada en espigas ICT",
+    "Mitigacion corregida — no entra en zonas consumidas",
+    "Panel visual adaptativo al fondo del grafico",
+    "Bridge APEX sin entradas multiples",
+    "Proteccion V75/V100 con techo de lote seguro",
+    "Score dinamico en espigas"
+  ]
+}
