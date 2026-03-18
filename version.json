@@ -1,16 +1,15 @@
 {
-  "version": "3.8",
+  "version": "3.9",
   "fecha": "2026-03-18",
-  "nota": "Lote por capital corregido, zona optima espigas, panel adaptativo",
-  "url_descarga": "https://raw.githubusercontent.com/fernandosan84/apex-tradin/main/FERNANDO_DERIV_FULL_PRO_v3.8.mq5",
+  "nota": "Score ponderado ICT + contexto HTF H1 + entrada equilibrada",
+  "url_descarga": "https://raw.githubusercontent.com/fernandosan84/apex-updates/main/APEX_BOT_v3_9.ex5",
   "obligatoria": false,
   "changelog": [
-    "Lote calculado por porcentaje real del capital",
-    "Zona optima de entrada en espigas ICT",
-    "Mitigacion corregida — no entra en zonas consumidas",
-    "Panel visual adaptativo al fondo del grafico",
-    "Bridge APEX sin entradas multiples",
-    "Proteccion V75/V100 con techo de lote seguro",
-    "Score dinamico en espigas"
+    "Score ponderado OB=2 FVG=1.5 Fractal=0.5",
+    "Contexto HTF - OB/FVG en H1 como validacion macro",
+    "Tolerancia de zona reducida a 0.12 ATR",
+    "Confirmacion de vela mejorada al 55% del rango",
+    "Bloqueo zona contraria ajustado a 0.7 ATR",
+    "Score minimo 2.5 pts equilibrado"
   ]
 }
