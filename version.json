@@ -1,1 +1,1 @@
-{"version":"3.21","nota":"Boton ACTIVO/PAUSADO mas visible y legible","fecha":"2026-03-19","changelog":["Boton ACTIVO/PAUSADO mas grande y legible en esquina inferior izquierda","Muestra: ACTIVO verde, PAUSADO rojo, DD MAX amarillo"]}
+{"version":"3.22","nota":"Sin notificacion en grafico + boton ACTIVO/PAUSADO corregido","fecha":"2026-03-19","changelog":["Notificacion de actualizacion removida del grafico MT5","La actualizacion se notifica solo por el scanner web","Boton ACTIVO/PAUSADO reubicado junto al panel visual"]}
