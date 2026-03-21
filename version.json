@@ -1,1 +1,11 @@
-{"version":"4.01","nota":"DD gradual por balance + limite ganancia adaptativo + DD_Pausa_Horas funcional","fecha":"2026-03-21","changelog":["DD GRADUAL FASE 3: cuentas $200+ ya no usan DD fijo 3% — escala de 10% hasta 3% segun balance","LIMITE GANANCIA DIARIA: reemplaza el fijo 8% por escala 20% (cuentas pequeñas) hasta 7% (cuentas grandes)","DD_PAUSA_HORAS: el input ahora funciona realmente — configura las horas de pausa al alcanzar el DD","FIX: eliminada inicializacion duplicada de BalDiaInicio en OnInit"]}
+{
+  "version": "4.01",
+  "nota": "DD gradual por balance + limite ganancia adaptativo + DD_Pausa_Horas funcional",
+  "fecha": "2026-03-21",
+  "changelog": [
+    "DD GRADUAL FASE 3: cuentas $200+ ya no usan DD fijo 3% — escala de 10% hasta 3% segun balance",
+    "LIMITE GANANCIA DIARIA: reemplaza el fijo 8% por escala 20% (cuentas pequeñas) hasta 7% (cuentas grandes)",
+    "DD_PAUSA_HORAS: el input ahora funciona realmente — configura las horas de pausa al alcanzar el DD",
+    "FIX: eliminada inicializacion duplicada de BalDiaInicio en OnInit"
+  ]
+}
