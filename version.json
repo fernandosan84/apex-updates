@@ -1,11 +1,11 @@
 {
-  "version": "4.02",
-  "nota": "DD gradual por balance + limite ganancia adaptativo + DD_Pausa_Horas funcional",
+  "version": "4.03",
+  "nota": "Bridge Firebase corregido — scanner web ahora envía entradas al bot MT5 correctamente",
   "fecha": "2026-03-21",
   "changelog": [
-    "DD GRADUAL FASE 3: cuentas $200+ ya no usan DD fijo 3% — escala de 10% hasta 3% segun balance",
-    "LIMITE GANANCIA DIARIA: reemplaza el fijo 8% por escala 20% (cuentas pequeñas) hasta 7% (cuentas grandes)",
-    "DD_PAUSA_HORAS: el input ahora funciona realmente — configura las horas de pausa al alcanzar el DD",
-    "FIX: eliminada inicializacion duplicada de BalDiaInicio en OnInit"
+    "FIX CRÍTICO: corregido orderBy en consulta Firebase que impedía leer señales del scanner",
+    "Bridge ahora lee señales cada 30s en vez de 60s — respuesta más rápida",
+    "Diagnóstico mejorado: nuevos mensajes en el log para confirmar conexión Firebase",
+    "Scanner web → Firebase → Bot MT5 operativo en cuenta real"
   ]
 }
