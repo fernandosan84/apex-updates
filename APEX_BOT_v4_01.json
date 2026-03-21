@@ -1,0 +1,227 @@
+{
+  "bot": {
+    "nombre": "APEX_FUSION_v4.1",
+    "version": "4.01",
+    "autor": "Fernando Sanchez",
+    "contacto": {
+      "whatsapp": "+573112603861",
+      "canal": "@Fernandosan_84"
+    },
+    "magic": 20260318,
+    "descripcion": "Bot Fusionado v4.1 — Filtro Mercado Difícil | 35 activos Deriv simultáneos | ICT + Régimen adaptativo"
+  },
+
+  "licencia": {
+    "Lic_Clave": "",
+    "Lic_Cuenta": "",
+    "Lic_Vencimiento": ""
+  },
+
+  "telegram": {
+    "TG_Token": "",
+    "TG_ChatID": "",
+    "TG_Activo": true,
+    "Push_On": true
+  },
+
+  "riesgo_capital": {
+    "Riesgo_Pct": 1.5,
+    "MaxRiesgo_Pct": 2.0,
+    "AutoRiesgo": true,
+    "DD_Max": 3.0,
+    "DD_Pausa_Horas": 4,
+    "Lote_Max_BC": 10.00,
+    "Lote_Max_VOL": 15.00,
+    "Lote_Max_V75": 0.50,
+    "Lote_Max_Step": 2.00,
+    "RR_Min": 1.1
+  },
+
+  "limites": {
+    "Max_Simultaneas": 3,
+    "Max_Dia": 5,
+    "SL_Max_ATR": 2.0,
+    "SL_Risk_Max": 1.5
+  },
+
+  "escaner": {
+    "Scan_TF": "PERIOD_M15",
+    "Scan_Lookback": 60
+  },
+
+  "activos": {
+    "volatility_indices": {
+      "Vol10_On": true,
+      "Vol25_On": true,
+      "Vol50_On": true,
+      "Vol75_On": true,
+      "Vol100_On": true,
+      "Vol1s_On": false
+    },
+    "step_index": {
+      "Step_On": true,
+      "Step200_On": true,
+      "Step300_On": false,
+      "Step400_On": false,
+      "Step500_On": false
+    },
+    "boom_indices": {
+      "Boom300_On": true,
+      "Boom500_On": true,
+      "Boom600_On": true,
+      "Boom900_On": true,
+      "Boom1000_On": true
+    },
+    "crash_indices": {
+      "Crash300_On": true,
+      "Crash500_On": true,
+      "Crash600_On": true,
+      "Crash900_On": true,
+      "Crash1000_On": true
+    },
+    "jump_range": {
+      "Jump10_On": true,
+      "Jump25_On": true,
+      "Jump50_On": true,
+      "Jump75_On": true,
+      "Jump100_On": true,
+      "Range_On": false
+    }
+  },
+
+  "ict_confluencia": {
+    "Min_Score_ICT": 1,
+    "ATR_Per": 14,
+    "FractalPeriod": 2,
+    "FVG_Min_ATR": 0.0,
+    "Filtro_Consolidacion": true,
+    "ConsolidBars": 5,
+    "ConsolidFactor": 0.35
+  },
+
+  "espigas": {
+    "Espiga_Activa": true,
+    "Espiga_Min_ATR": 2.0,
+    "Espiga_Lookback": 50,
+    "Espiga_Prio": 4
+  },
+
+  "boom_crash": {
+    "BC_SL_Mult": 1.5,
+    "BC_TP1_RR": 1.5,
+    "BC_TP2_RR": 2.8
+  },
+
+  "tp_sl_general": {
+    "TP1_RR": 1.3,
+    "TP2_RR": 2.5,
+    "SL_ATR_Mult": 1.2,
+    "TP_Extension": true,
+    "TP_Ext_RR": 4.0
+  },
+
+  "filtro_tendencia_ema": {
+    "EMA_Activo": true,
+    "EMA_Lenta": 50,
+    "EMA_Rapida": 8,
+    "EMA_Media": 21,
+    "Vela_Min_Body": 0.10,
+    "Mom_Factor": 0.60
+  },
+
+  "apex_bridge": {
+    "Apex_Activo": true,
+    "Apex_RutaComun": "",
+    "firebase": {
+      "signals_url": "https://firestore.googleapis.com/v1/projects/apex-scanner/databases/(default)/documents/apex_signals",
+      "historial_url": "https://firestore.googleapis.com/v1/projects/apex-scanner/databases/(default)/documents/historial_bot",
+      "archivo_local": "apex_signals.json",
+      "max_age_segundos": 300,
+      "min_score": 80.0,
+      "leer_cada_segundos": 60
+    }
+  },
+
+  "asistencia_manual": {
+    "Gestionar_Manual": true,
+    "Manual_SL_Auto": true,
+    "Manual_TP_Auto": true
+  },
+
+  "log": {
+    "Log_On": true,
+    "Log_CSV": true
+  },
+
+  "mejoras_v4": {
+    "M1_Regimen_On": true,
+    "M3_Horario_On": false,
+    "M3_Hora_Inicio": 0,
+    "M3_Hora_Fin": 23,
+    "M4_Score_Adapt_On": true,
+    "M5_Trail_ATR_On": true,
+    "M6_Memoria_On": true,
+    "M7_Rachet_On": true,
+    "constantes": {
+      "BE_PCT": 0.30,
+      "PARCIAL_PCT": 0.70,
+      "TRAIL_ESCALON": 0.30,
+      "TRAIL_RR_MIN": 0.50,
+      "RACHET_STEP": 0.10,
+      "RACHET_MAX": 1.00,
+      "MEM_SYM_OPS": 10,
+      "HORA_INICIO_UTC": 6,
+      "HORA_FIN_UTC": 20
+    }
+  },
+
+  "visual_ict": {
+    "Vis_Activo": true,
+    "Vis_Fractales": true,
+    "Vis_OB": true,
+    "Vis_FVG": true,
+    "Vis_SSL": true,
+    "Vis_Panel": true,
+    "Vis_Lookback": 50,
+    "Vis_PanelX": 12,
+    "Vis_PanelY": 420
+  },
+
+  "score_dia": {
+    "inicio": 100,
+    "win_bonus": 15,
+    "loss_penalty": -25,
+    "umbrales": {
+      "conservador": 50,
+      "critico": 25,
+      "parado": 0
+    }
+  },
+
+  "filtros_v4_1": {
+    "F1_ATR_M1": true,
+    "F2_CHOP_M15": true,
+    "F3_Tendencia_H1": true,
+    "F4_Bloqueo_Por_Activo": true,
+    "F4_Losses_Para_Bloquear": 2,
+    "F4_Bloqueo_Horas": 3,
+    "F5_Reset_Dia_Auto": true
+  },
+
+  "fases_balance": {
+    "fase1": { "min": 20.0, "max": 50.0, "descripcion": "Micro" },
+    "fase2": { "min": 50.0, "max": 200.0, "descripcion": "Standard" },
+    "fase3": { "min": 200.0, "max": null, "descripcion": "Pro" }
+  },
+
+  "urls_permitidas_mt5": [
+    "https://firestore.googleapis.com"
+  ],
+
+  "notas_instalacion": [
+    "Agregar en MT5 → Herramientas → Opciones → Asesores Expertos → URLs permitidas: https://firestore.googleapis.com",
+    "Boom = solo BUY | Crash = solo SELL | VOL/Step = multi-TF",
+    "Vol1s, Step300-500 recomendados para cuentas > $500",
+    "Range_On desactivado por defecto"
+  ]
+}
