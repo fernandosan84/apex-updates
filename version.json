@@ -1,5 +1,5 @@
 {
-  "version": "4.01",
+  "version": "4.02",
   "nota": "DD gradual por balance + limite ganancia adaptativo + DD_Pausa_Horas funcional",
   "fecha": "2026-03-21",
   "changelog": [
