@@ -1,0 +1,3307 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover">
+
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="APEX">
+<meta name="application-name" content="APEX Scanner">
+<meta name="theme-color" content="#04060d">
+<meta name="msapplication-TileColor" content="#04060d">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>APEX — Asistente Institucional Deriv LIVE</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;800&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap');
+:root{--bg:#04060d;--panel:#070c18;--panel2:#0a1020;--border:#0e1c35;--border2:#162540;--accent:#00c8ff;--green:#00e87a;--red:#ff2d55;--yellow:#ffc300;--orange:#ff7a00;--purple:#9b59ff;--text:#b8cce0;--text2:#7a9ab8;--dim:#364f6b;--white:#e8f4ff}
+*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Space Mono',monospace;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 10%,rgba(0,200,255,.04) 0%,transparent 60%),radial-gradient(ellipse 50% 30% at 80% 80%,rgba(155,89,255,.04) 0%,transparent 60%),linear-gradient(rgba(0,200,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,255,.025) 1px,transparent 1px);background-size:auto,auto,50px 50px,50px 50px;pointer-events:none;z-index:0}
+/* ═══════════════════════════════════════════
+   PANTALLA DE ACCESO APEX — Sistema de Claves
+   ═══════════════════════════════════════════ */
+#apexAccessScreen{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;background:var(--bg);flex-direction:column}
+#apexAccessScreen::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 30%,rgba(0,200,255,.06) 0%,transparent 70%);pointer-events:none}
+.access-box{width:480px;border:1px solid var(--border2);background:var(--panel);padding:52px 48px;position:relative;overflow:hidden;box-shadow:0 0 80px rgba(0,200,255,.08)}
+.access-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),var(--purple),transparent)}
+.access-box::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,200,255,.3),transparent)}
+.access-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:48px;letter-spacing:8px;color:var(--accent);text-shadow:0 0 60px rgba(0,200,255,.5),0 0 120px rgba(0,200,255,.2);margin-bottom:4px;text-align:center}
+.access-sub{font-size:9px;letter-spacing:5px;color:var(--dim);text-transform:uppercase;margin-bottom:8px;text-align:center}
+.access-autor{font-size:10px;color:var(--accent);letter-spacing:2px;text-align:center;margin-bottom:40px;opacity:.7}
+.access-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border2),transparent);margin:0 0 36px}
+.access-label{font-size:9px;letter-spacing:3px;color:var(--dim);text-transform:uppercase;margin-bottom:10px;display:block}
+.access-input{width:100%;background:rgba(0,200,255,.03);border:1px solid var(--border2);padding:16px 18px;color:var(--white);font-family:'Space Mono',monospace;font-size:14px;outline:none;transition:all .3s;letter-spacing:3px;text-align:center;text-transform:uppercase}
+.access-input:focus{border-color:var(--accent);box-shadow:0 0 30px rgba(0,200,255,.12);background:rgba(0,200,255,.05)}
+.access-input::placeholder{color:var(--dim);font-size:11px;letter-spacing:2px;text-transform:none}
+.access-btn{width:100%;background:linear-gradient(135deg,var(--accent),var(--purple));border:none;color:var(--bg);padding:18px;font-family:'Syne',sans-serif;font-weight:800;font-size:12px;letter-spacing:5px;cursor:pointer;transition:all .3s;text-transform:uppercase;margin-top:16px;position:relative;overflow:hidden}
+.access-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--green),var(--accent));opacity:0;transition:opacity .3s}
+.access-btn:hover::before{opacity:1}
+.access-btn:hover{box-shadow:0 0 40px rgba(0,200,255,.3);transform:translateY(-1px)}
+.access-btn span{position:relative;z-index:1}
+.access-error{font-size:11px;color:var(--red);margin-top:14px;display:none;text-align:center;letter-spacing:1px;padding:10px;border:1px solid rgba(255,45,85,.2);background:rgba(255,45,85,.05)}
+.access-vencida{font-size:11px;color:var(--yellow);margin-top:14px;display:none;text-align:center;letter-spacing:1px;padding:10px;border:1px solid rgba(255,195,0,.2);background:rgba(255,195,0,.05)}
+.access-footer{margin-top:32px;padding-top:24px;border-top:1px solid var(--border);text-align:center}
+.access-footer-name{font-size:12px;color:var(--white);letter-spacing:2px;font-weight:bold;margin-bottom:6px}
+.access-footer-contact{font-size:10px;color:var(--dim);letter-spacing:1px;line-height:2}
+.access-footer-contact a{color:var(--accent);text-decoration:none}
+.access-badge{display:inline-block;font-size:8px;letter-spacing:3px;color:var(--green);border:1px solid rgba(0,232,122,.3);padding:3px 10px;margin-bottom:28px;text-transform:uppercase}
+.access-dots{display:flex;justify-content:center;gap:6px;margin-top:20px}
+.access-dot{width:6px;height:6px;border-radius:50%;background:var(--border2)}
+.access-dot.active{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+/* ═══════════════════════════════════════════
+   PANEL ADMIN — Gestión de Clientes
+   ═══════════════════════════════════════════ */
+#adminPanel{position:fixed;inset:0;z-index:400;background:rgba(4,6,13,.97);display:none;flex-direction:column;overflow:hidden}
+.admin-header{display:flex;align-items:center;justify-content:space-between;padding:20px 32px;border-bottom:1px solid var(--border2);background:var(--panel);flex-shrink:0}
+.admin-title{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;letter-spacing:4px;color:var(--accent)}
+.admin-title span{font-size:11px;color:var(--dim);letter-spacing:2px;display:block;margin-top:2px}
+.admin-close{background:none;border:1px solid var(--border2);color:var(--dim);padding:8px 16px;font-family:'Space Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:2px;transition:all .2s}
+.admin-close:hover{border-color:var(--red);color:var(--red)}
+.admin-body{flex:1;overflow-y:auto;padding:32px;display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.admin-card{background:var(--panel);border:1px solid var(--border2);padding:28px;position:relative;overflow:hidden}
+.admin-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.admin-card-title{font-size:10px;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:8px}
+.admin-card-title::after{content:'';flex:1;height:1px;background:var(--border2)}
+.admin-field{margin-bottom:16px}
+.admin-label{font-size:9px;letter-spacing:2px;color:var(--dim);text-transform:uppercase;margin-bottom:6px;display:block}
+.admin-input{width:100%;background:rgba(0,200,255,.03);border:1px solid var(--border2);padding:12px 14px;color:var(--white);font-family:'Space Mono',monospace;font-size:12px;outline:none;transition:all .3s}
+.admin-input:focus{border-color:var(--accent);box-shadow:0 0 20px rgba(0,200,255,.08)}
+.admin-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.admin-btn{width:100%;background:linear-gradient(135deg,var(--accent),var(--purple));border:none;color:var(--bg);padding:14px;font-family:'Syne',sans-serif;font-weight:800;font-size:11px;letter-spacing:3px;cursor:pointer;transition:all .3s;text-transform:uppercase;margin-top:8px}
+.admin-btn:hover{opacity:.85;transform:translateY(-1px)}
+.admin-btn.danger{background:linear-gradient(135deg,var(--red),#8B0000)}
+.admin-preview{margin-top:20px;padding:16px;background:rgba(0,200,255,.04);border:1px solid var(--border2);display:none}
+.admin-preview-label{font-size:9px;color:var(--dim);letter-spacing:2px;margin-bottom:8px}
+.admin-preview-key{font-size:15px;color:var(--accent);letter-spacing:3px;font-weight:bold;word-break:break-all}
+.admin-copy{background:none;border:1px solid var(--accent);color:var(--accent);padding:6px 14px;font-family:'Space Mono',monospace;font-size:9px;cursor:pointer;letter-spacing:2px;margin-top:10px;transition:all .2s;display:block;width:100%}
+.admin-copy:hover{background:var(--accent);color:var(--bg)}
+.admin-copy.copied{background:var(--green);border-color:var(--green);color:var(--bg)}
+.admin-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.admin-stat{background:rgba(0,200,255,.04);border:1px solid var(--border2);padding:14px;text-align:center}
+.admin-stat-num{font-size:28px;font-weight:bold;color:var(--accent);font-family:'Syne',sans-serif}
+.admin-stat-label{font-size:9px;color:var(--dim);letter-spacing:2px;margin-top:4px}
+.clientes-list{display:flex;flex-direction:column;gap:8px;max-height:420px;overflow-y:auto}
+.cliente-row{display:grid;grid-template-columns:1fr auto auto auto;gap:10px;align-items:center;padding:12px 14px;background:rgba(0,200,255,.03);border:1px solid var(--border2);transition:border-color .2s}
+.cliente-row:hover{border-color:var(--border2)}
+.cliente-row.activo{border-left:3px solid var(--green)}
+.cliente-row.vencido{border-left:3px solid var(--red);opacity:.6}
+.cliente-row.demo{border-left:3px solid var(--yellow)}
+.cliente-nombre{font-size:11px;color:var(--white);letter-spacing:1px}
+.cliente-clave{font-size:9px;color:var(--dim);margin-top:2px;letter-spacing:1px}
+.cliente-vence{font-size:9px;letter-spacing:1px;text-align:right}
+.cliente-badge{font-size:8px;padding:3px 8px;letter-spacing:2px;border:1px solid}
+.badge-activo{color:var(--green);border-color:rgba(0,232,122,.3);background:rgba(0,232,122,.05)}
+.badge-vencido{color:var(--red);border-color:rgba(255,45,85,.3);background:rgba(255,45,85,.05)}
+.badge-demo{color:var(--yellow);border-color:rgba(255,195,0,.3);background:rgba(255,195,0,.05)}
+.badge-permanente{color:var(--accent);border-color:rgba(0,200,255,.3);background:rgba(0,200,255,.05)}
+.cliente-actions{display:flex;gap:6px}
+.btn-cli{background:none;border:1px solid var(--border2);color:var(--dim);padding:4px 10px;font-family:'Space Mono',monospace;font-size:9px;cursor:pointer;transition:all .2s;letter-spacing:1px}
+.btn-cli:hover{border-color:var(--accent);color:var(--accent)}
+.btn-cli.del:hover{border-color:var(--red);color:var(--red)}
+.admin-empty{text-align:center;padding:40px;color:var(--dim);font-size:11px;letter-spacing:2px}
+.admin-msg{font-size:10px;margin-top:10px;padding:8px;display:none;text-align:center;letter-spacing:1px}
+.admin-msg.ok{color:var(--green);background:rgba(0,232,122,.05);border:1px solid rgba(0,232,122,.2)}
+.admin-msg.err{color:var(--red);background:rgba(255,45,85,.05);border:1px solid rgba(255,45,85,.2)}
+#adminBtn{background:none;border:1px solid var(--purple);color:var(--purple);padding:6px 14px;font-family:'Space Mono',monospace;font-size:9px;cursor:pointer;letter-spacing:2px;transition:all .2s}
+#adminBtn:hover{background:var(--purple);color:var(--bg)}
+#adminPanel::-webkit-scrollbar,.clientes-list::-webkit-scrollbar{width:4px}
+#adminPanel::-webkit-scrollbar-track,.clientes-list::-webkit-scrollbar-track{background:var(--panel)}
+#adminPanel::-webkit-scrollbar-thumb,.clientes-list::-webkit-scrollbar-thumb{background:var(--border2)}
+.whatsapp-preview{margin-top:16px;background:rgba(0,232,122,.04);border:1px solid rgba(0,232,122,.2);padding:14px;display:none}
+.whatsapp-preview-label{font-size:9px;color:var(--green);letter-spacing:2px;margin-bottom:8px}
+.whatsapp-preview-text{font-size:11px;color:var(--text);line-height:1.8;white-space:pre-wrap}
+
+#adminPanel{position:fixed;inset:0;z-index:400;background:rgba(4,6,13,.97);display:none;flex-direction:column;overflow:hidden}
+.login-box{width:460px;border:1px solid var(--border2);background:var(--panel);padding:48px;position:relative;overflow:hidden}
+.login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.login-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:36px;letter-spacing:6px;color:var(--accent);text-shadow:0 0 40px rgba(0,200,255,.4);margin-bottom:6px}
+.login-sub{font-size:9px;letter-spacing:5px;color:var(--dim);text-transform:uppercase;margin-bottom:40px}
+.login-field{margin-bottom:20px}
+.login-label{font-size:9px;letter-spacing:3px;color:var(--dim);text-transform:uppercase;margin-bottom:8px;display:block}
+.login-input{width:100%;background:rgba(0,200,255,.04);border:1px solid var(--border2);padding:14px 16px;color:var(--white);font-family:'Space Mono',monospace;font-size:13px;outline:none;transition:border-color .3s,box-shadow .3s;letter-spacing:1px}
+.login-input:focus{border-color:var(--accent);box-shadow:0 0 20px rgba(0,200,255,.1)}
+.login-input::placeholder{color:var(--dim);font-size:11px}
+.login-btn{width:100%;background:var(--accent);border:none;color:var(--bg);padding:16px;font-family:'Syne',sans-serif;font-weight:800;font-size:13px;letter-spacing:4px;cursor:pointer;transition:all .3s;text-transform:uppercase;margin-top:8px}
+.login-btn:hover{background:var(--green);box-shadow:0 0 30px rgba(0,232,122,.3)}
+.login-btn:disabled{opacity:.4;cursor:not-allowed}
+.login-note{font-size:10px;color:var(--dim);line-height:1.8;margin-top:24px;border-top:1px solid var(--border);padding-top:20px}
+.login-note a{color:var(--accent);text-decoration:none}
+.login-error{font-size:11px;color:var(--red);margin-top:12px;display:none}
+#app{display:none;position:relative;z-index:1}
+/* ═══════ NEW APEX DESIGN — HUD Cards ═══════ */
+body{font-family:'Rajdhani',sans-serif !important}
+.header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid rgba(0,200,255,.12);background:linear-gradient(135deg,rgba(0,200,255,.03),rgba(155,89,255,.03));position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);gap:10px;flex-wrap:wrap}
+.h-logo{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:26px;letter-spacing:3px;color:#fff}
+.h-logo em{color:#00c8ff;font-style:normal;text-shadow:0 0 16px rgba(0,200,255,.6)}
+.h-logo span{font-family:'Share Tech Mono',monospace;font-weight:400;font-size:8px;color:rgba(0,200,255,.35);letter-spacing:4px;display:block;margin-top:-3px}
+.h-center{display:flex;gap:12px;align-items:center}
+.live-indicator{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:1px;color:#00ff78;background:rgba(0,255,120,.07);padding:5px 13px;border-radius:6px;border:1px solid rgba(0,255,120,.2);font-family:'Share Tech Mono',monospace}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#00ff78;box-shadow:0 0 8px #00ff78;animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.ws-status{font-size:9px;letter-spacing:1px;padding:5px 13px;border-radius:6px;font-family:'Share Tech Mono',monospace}
+.ws-ok{background:rgba(0,200,255,.07);color:#00c8ff;border:1px solid rgba(0,200,255,.2)}
+.ws-err{background:rgba(255,45,85,.1);color:var(--red);border:1px solid rgba(255,45,85,.3)}
+.ws-warn{background:rgba(255,195,0,.1);color:var(--yellow);border:1px solid rgba(255,195,0,.3)}
+.h-right{display:flex;gap:8px;align-items:center}
+.btn-small{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.3);padding:5px 12px;font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:1px;cursor:pointer;transition:all .25s;border-radius:6px}
+.btn-small:hover{border-color:rgba(0,200,255,.3);color:#00c8ff;background:rgba(0,200,255,.05)}
+.btn-scan{background:linear-gradient(135deg,#00c8ff,#9b59ff);border:none;color:#fff;padding:7px 18px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;cursor:pointer;transition:all .3s;border-radius:7px}
+.btn-scan:hover{opacity:.85;box-shadow:0 0 20px rgba(0,200,255,.3)}
+.btn-scan:disabled{opacity:.3;cursor:not-allowed}
+/* ═══════ LAYOUT NEW CARDS ═══════ */
+.layout{display:flex;flex-direction:column;height:calc(100vh - 57px);overflow-y:auto}
+.scanner-panel{flex:1;padding:16px 20px;overflow-y:visible}
+.scanner-panel::-webkit-scrollbar{width:4px}
+.scanner-panel::-webkit-scrollbar-thumb{background:rgba(0,200,255,.2);border-radius:2px}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.section-title{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:4px;color:rgba(0,200,255,.4);text-transform:uppercase}
+.section-count{font-family:'Share Tech Mono',monospace;font-size:10px;color:#00c8ff;font-weight:700}
+.col-head{display:none}
+.hint-row{display:none}
+
+/* TOP CARD */
+.top-signal-card{background:linear-gradient(135deg,#0d0820,#110a2a);border:1px solid rgba(108,99,255,.45);border-radius:14px;padding:20px 24px;position:relative;overflow:hidden;cursor:pointer;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;align-items:center;margin-bottom:12px;transition:transform .15s}
+.top-signal-card:hover{transform:translateY(-2px)}
+.top-signal-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#6c63ff,#a855f7,#00c8ff)}
+.top-signal-card::after{content:'';position:absolute;top:-60px;right:-60px;width:180px;height:180px;background:radial-gradient(circle,rgba(108,99,255,.12),transparent 70%)}
+.tsc-badge{position:absolute;top:14px;right:16px;font-family:'Share Tech Mono',monospace;font-size:8px;background:linear-gradient(135deg,#6c63ff,#a855f7);color:#fff;padding:3px 10px;border-radius:4px;font-weight:700;letter-spacing:1px}
+.tsc-sym{font-size:42px;font-weight:700;color:#fff;letter-spacing:1px;line-height:1;font-family:'Rajdhani',sans-serif}
+.tsc-cat{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(108,99,255,.5);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+.tsc-price{font-family:'Share Tech Mono',monospace;font-size:26px;font-weight:700;margin-top:8px}
+.tsc-dir{display:inline-block;font-size:12px;font-weight:700;padding:5px 16px;border-radius:6px;margin-top:8px;letter-spacing:1px;font-family:'Rajdhani',sans-serif}
+.tsc-conf-lbl{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:2px;color:rgba(255,255,255,.2);margin-bottom:8px}
+.tsc-conf-track{height:8px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden;margin-bottom:8px}
+.tsc-conf-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#6c63ff,#a855f7,#00c8ff);transition:width 1s ease}
+.tsc-conf-pct{font-size:48px;font-weight:700;color:#a855f7;line-height:1;font-family:'Rajdhani',sans-serif}
+.tsc-conf-sub{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,.2);letter-spacing:2px;margin-top:4px}
+.tsc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tsc-item{background:rgba(0,0,0,.3);border-radius:8px;padding:10px 12px;border:1px solid rgba(108,99,255,.1)}
+.tsc-il{font-family:'Share Tech Mono',monospace;font-size:7px;color:rgba(255,255,255,.2);letter-spacing:2px}
+.tsc-iv{font-size:18px;font-weight:700;margin-top:2px;font-family:'Rajdhani',sans-serif}
+
+/* CARDS GRID */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px}
+
+/* ASSET CARD (reemplaza asset-row) */
+.asset-row{background:#0b0f1a;border:1px solid #141c2e;border-radius:10px;padding:12px;position:relative;overflow:hidden;cursor:pointer;transition:transform .15s,border-color .15s;display:flex !important;flex-direction:column;gap:0}
+.asset-row::before{content:'';position:absolute;top:0;left:0;right:0;height:1px}
+.asset-row.bull{border-left:3px solid #00ff78}
+.asset-row.bull::before{background:linear-gradient(90deg,rgba(0,255,120,.4),transparent)}
+.asset-row.bear{border-left:3px solid #ff4466}
+.asset-row.bear::before{background:linear-gradient(90deg,rgba(255,68,102,.4),transparent)}
+.asset-row.rang{border-left:3px solid #fbbf24}
+.asset-row.rang::before{background:linear-gradient(90deg,rgba(251,191,36,.3),transparent)}
+.asset-row:hover{transform:translateY(-2px);border-color:rgba(0,200,255,.2)}
+.asset-row.active{border-color:rgba(108,99,255,.5);background:rgba(108,99,255,.05)}
+.a-row-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.a-name{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:16px;color:#e8f4ff;letter-spacing:.5px}
+.a-cat{font-family:'Share Tech Mono',monospace;font-size:7px;color:rgba(255,255,255,.15);letter-spacing:1px;margin-top:1px;text-transform:uppercase}
+.a-price{font-family:'Share Tech Mono',monospace;font-size:13px;font-weight:600;margin-bottom:7px}
+.a-price.live{animation:priceFlash .4s ease}
+@keyframes priceFlash{0%{opacity:.3}100%{opacity:1}}
+.trend-pill{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:7px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:.5px}
+.tp-bull{background:rgba(0,255,120,.08);color:#00ff78;border:1px solid rgba(0,255,120,.2)}
+.tp-bear{background:rgba(255,68,102,.08);color:#ff4466;border:1px solid rgba(255,68,102,.2)}
+.tp-rang{background:rgba(251,191,36,.08);color:#fbbf24;border:1px solid rgba(251,191,36,.2)}
+.score-col{display:flex;align-items:center;gap:6px;margin:7px 0}
+.s-bar{flex:1;height:3px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden}
+.s-fill{height:100%;border-radius:2px;transition:width .8s ease}
+.s-num{font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;min-width:28px;text-align:right}
+.a-row-foot{display:flex;justify-content:space-between;align-items:center}
+.op-tag{font-family:'Share Tech Mono',monospace;font-size:7px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:4px}
+.op-yes{background:rgba(0,255,120,.07);color:#00ff78;border:1px solid rgba(0,255,120,.15)}
+.op-watch{background:rgba(251,191,36,.07);color:#fbbf24;border:1px solid rgba(251,191,36,.15)}
+.op-no{background:rgba(255,68,102,.07);color:#ff4466;border:1px solid rgba(255,68,102,.15)}
+.right-top{display:none}
+.right-bottom{display:none}
+.rec-card{background:linear-gradient(135deg,#0d0820,#110a2a);border:1px solid rgba(108,99,255,.3);padding:16px;margin-bottom:12px;position:relative;overflow:hidden;border-radius:10px}
+.rec-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#6c63ff,#a855f7,#00c8ff)}
+.rec-card::after{content:'';position:absolute;top:-40px;right:-40px;width:130px;height:130px;background:radial-gradient(circle,rgba(108,99,255,.1),transparent 70%)}
+.rec-label{font-family:'Share Tech Mono',monospace;font-size:8px;letter-spacing:3px;color:rgba(108,99,255,.6);margin-bottom:8px}
+.rec-name{font-family:'Rajdhani',sans-serif;font-size:24px;font-weight:700;color:#fff;margin-bottom:3px}
+.rec-dir{font-size:13px;font-weight:700;margin-bottom:12px;font-family:'Rajdhani',sans-serif}
+.conf-row{margin-bottom:14px}
+.conf-lbl{font-size:9px;letter-spacing:2px;color:var(--dim);margin-bottom:5px}
+.conf-track{height:4px;background:var(--border2);border-radius:2px;overflow:hidden}
+.conf-bar{height:100%;border-radius:2px;background:linear-gradient(90deg,#6c63ff,#a855f7,#00c8ff);box-shadow:0 0 8px rgba(108,99,255,.4);transition:width 1.2s ease}
+.conf-pct{font-size:12px;color:var(--accent);margin-top:4px;font-weight:700}
+.rec-bullets{font-size:10px;color:var(--text);line-height:1.9}
+.rec-bullets strong{color:var(--accent)}
+.mtf-title{font-size:9px;letter-spacing:4px;color:var(--dim);margin-bottom:12px;display:flex;justify-content:space-between}
+.tf-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:16px}
+.tf-cell{padding:8px 6px;background:var(--panel2);border:1px solid var(--border);text-align:center;transition:border-color .3s}
+.tf-cell.aligned{border-color:rgba(0,232,122,.3)}
+.tf-cell.counter{border-color:rgba(255,45,85,.2)}
+.tf-cell.macro{border-color:rgba(255,195,0,.35);background:rgba(255,195,0,.04)}
+.tf-cell.macro .tf-label{color:#ffc300}
+.modal-tf-cell.macro{border-color:rgba(255,195,0,.4);background:rgba(255,195,0,.05)}
+.modal-tf-cell.macro .tf-label{color:#ffc300}
+.macro-toggle-bar{display:flex;gap:6px;align-items:center;margin-bottom:8px;padding:6px 8px;background:rgba(255,195,0,.04);border:1px solid rgba(255,195,0,.15);border-radius:4px}
+.macro-toggle-bar span{font-size:9px;color:#ffc300;letter-spacing:2px;font-family:'Space Mono',monospace}
+.btn-macro-toggle{background:rgba(255,195,0,.15);border:1px solid rgba(255,195,0,.4);color:#ffc300;padding:3px 10px;font-family:'Space Mono',monospace;font-size:9px;cursor:pointer;letter-spacing:1px;border-radius:3px;transition:all .2s}
+.btn-macro-toggle.off{background:transparent;border-color:rgba(255,195,0,.2);color:rgba(255,195,0,.4)}
+.btn-macro-toggle:hover{background:rgba(255,195,0,.25)}
+.tf-label{font-size:8px;color:var(--dim);letter-spacing:2px;margin-bottom:5px}
+.tf-t{font-size:10px;font-weight:700}
+.tf-s{font-size:8px;color:var(--dim);margin-top:2px}
+.bull-c{color:var(--green)}.bear-c{color:var(--red)}.rang-c{color:var(--yellow)}
+.levels-list{display:flex;flex-direction:column;gap:3px}
+.lv-row{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--panel2);font-size:10px}
+.lv-type{font-size:9px;color:var(--dim);letter-spacing:1px}
+.chat-wrap{display:flex;flex-direction:column;border-top:1px solid var(--border);height:100%}
+.chat-header{padding:10px 16px;border-bottom:1px solid var(--border);font-size:9px;letter-spacing:4px;color:var(--dim);background:var(--panel);flex-shrink:0}
+.chat-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.chat-msgs::-webkit-scrollbar{width:3px}
+.chat-msgs::-webkit-scrollbar-thumb{background:var(--border2)}
+.cm{padding:9px 12px;font-size:11px;line-height:1.7;max-width:90%}
+.cm.apex{background:rgba(0,200,255,.05);border-left:2px solid var(--accent);align-self:flex-start}
+.cm.user{background:rgba(255,255,255,.04);border-right:2px solid var(--dim);align-self:flex-end;color:var(--text2)}
+.cm-from{font-size:8px;letter-spacing:2px;color:var(--dim);margin-bottom:3px}
+.chat-foot{padding:10px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0}
+.chat-inp{flex:1;background:var(--panel2);border:1px solid var(--border2);padding:9px 12px;color:var(--text);font-family:'Space Mono',monospace;font-size:11px;outline:none;transition:border-color .3s}
+.chat-inp:focus{border-color:var(--accent)}
+.chat-inp::placeholder{color:var(--dim);font-size:10px}
+.chat-send{background:var(--accent);border:none;color:var(--bg);padding:9px 14px;font-family:'Syne',sans-serif;font-weight:700;font-size:10px;letter-spacing:2px;cursor:pointer;transition:all .25s}
+.chat-send:hover{background:var(--green)}
+.scan-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:60px 20px}
+.spin-ring{width:50px;height:50px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.scan-msg{font-size:11px;color:var(--dim);letter-spacing:2px;text-align:center}
+.scan-msg em{color:var(--accent);font-style:normal}
+/* MODAL */
+#modalOverlay{position:fixed;inset:0;z-index:300;background:rgba(4,6,13,.92);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
+#modalOverlay.open{display:flex}
+.modal{width:900px;max-width:100%;max-height:90vh;background:var(--panel);border:1px solid var(--border2);overflow-y:auto;position:relative}
+.modal::-webkit-scrollbar{width:4px}
+.modal::-webkit-scrollbar-thumb{background:var(--border2)}
+.modal-top{background:linear-gradient(135deg,rgba(0,200,255,.08),rgba(155,89,255,.05));border-bottom:1px solid var(--border2);padding:24px 28px;position:relative}
+.modal-top::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.modal-close{position:absolute;top:16px;right:20px;background:transparent;border:1px solid var(--border2);color:var(--dim);width:32px;height:32px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-close:hover{border-color:var(--red);color:var(--red)}
+.modal-sym{font-family:'Syne',sans-serif;font-weight:800;font-size:28px;letter-spacing:4px;color:var(--white)}
+.modal-name{font-size:10px;color:var(--dim);letter-spacing:3px;margin-top:2px}
+.modal-badges{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
+.modal-price{font-size:20px;font-weight:700;letter-spacing:1px}
+.modal-body{padding:24px 28px;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.modal-section-title{font-size:8px;letter-spacing:4px;color:var(--accent);margin-bottom:12px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.modal-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.signal-box{background:var(--panel2);border:1px solid var(--border2);padding:16px;margin-bottom:16px}
+.signal-dir{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:4px}
+.signal-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
+.sig-item{background:var(--bg);padding:10px;text-align:center}
+.sig-lbl{font-size:8px;color:var(--dim);letter-spacing:2px;margin-bottom:4px}
+.sig-val{font-size:13px;font-weight:700}
+#modalChart{display:block;width:100%;height:200px;background:var(--bg);border:1px solid var(--border)}
+.reason-item{display:flex;align-items:flex-start;gap:8px;padding:7px 0;border-bottom:1px solid rgba(14,28,53,.5);font-size:10px;line-height:1.6}
+.reason-item:last-child{border-bottom:none}
+.reason-icon{color:var(--accent);flex-shrink:0}
+.modal-tf-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.modal-tf-cell{padding:10px 8px;background:var(--bg);border:1px solid var(--border);text-align:center}
+.modal-tf-cell.aligned{border-color:rgba(0,232,122,.4);background:rgba(0,232,122,.03)}
+.modal-tf-cell.counter{border-color:rgba(255,45,85,.3)}
+.send-signal-btn{width:100%;background:linear-gradient(90deg,var(--accent),var(--green));border:none;color:var(--bg);padding:14px;font-family:'Syne',sans-serif;font-weight:800;font-size:12px;letter-spacing:4px;cursor:pointer;transition:all .3s;margin-top:16px;text-transform:uppercase}
+.send-signal-btn:hover{opacity:.85;box-shadow:0 0 30px rgba(0,200,255,.3)}
+.send-signal-btn:disabled{opacity:.3;cursor:not-allowed}
+.modal-full{grid-column:1/-1}
+.capital-box{background:rgba(0,200,255,0.04);border:1px solid rgba(0,200,255,0.2);padding:16px;margin-bottom:12px}
+.capital-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px}
+.capital-item{background:var(--bg);border:1px solid var(--border);padding:10px;text-align:center}
+.capital-lbl{font-size:8px;color:var(--dim);letter-spacing:2px;margin-bottom:4px}
+.capital-val{font-size:16px;font-weight:700;font-family:'Space Mono',monospace}
+.capital-input{width:100%;background:var(--bg);border:1px solid var(--border2);padding:9px 12px;color:var(--white);font-family:'Space Mono',monospace;font-size:14px;font-weight:700;outline:none;text-align:center}
+.capital-input:focus{border-color:var(--accent)}
+.riesgo-bar{height:4px;background:var(--border);margin-top:8px;border-radius:2px;overflow:hidden}
+.riesgo-fill{height:100%;transition:width .3s,background .3s}
+/* ═══════════════════════════════════════════
+   MOBILE OPTIMIZATIONS — Responsive completo
+   ═══════════════════════════════════════════ */
+@media(max-width:760px){
+  /* Modal */
+  .modal-body{grid-template-columns:1fr}
+  .modal{width:100%;max-width:100%;max-height:95vh;border-radius:0}
+  #modalOverlay{padding:0;align-items:flex-end}
+  .modal-sym{font-size:22px}
+  .signal-grid{grid-template-columns:1fr 1fr}
+  #mLevels{grid-template-columns:1fr 1fr !important}
+  .capital-row{grid-template-columns:1fr 1fr}
+  
+  /* Layout principal: stack vertical en móvil */
+  .layout{
+    display:flex;
+    flex-direction:column;
+    height:auto;
+    min-height:calc(100vh - 56px);
+  }
+  .scanner-panel{
+    border-right:none;
+    border-bottom:1px solid var(--border);
+    overflow-y:visible;
+    flex-shrink:0;
+  }
+  .right-top{
+    border-bottom:1px solid var(--border);
+    overflow-y:visible;
+    max-height:none;
+    padding:14px;
+  }
+  .right-bottom{
+    min-height:320px;
+    flex:1;
+  }
+  
+  /* Header compacto */
+  .header{
+    padding:10px 12px;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .h-logo{font-size:18px;letter-spacing:3px}
+  .h-logo span{display:none}
+  .h-center{gap:10px}
+  .ws-status{font-size:9px;padding:3px 7px}
+  .live-indicator{font-size:9px}
+  .h-right{
+    width:100%;
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    justify-content:flex-start;
+    padding-top:4px;
+    border-top:1px solid var(--border);
+  }
+  .btn-small{font-size:9px;padding:6px 10px;letter-spacing:1px}
+  .btn-scan{font-size:10px;padding:7px 14px;letter-spacing:2px}
+  #autoScanSel{font-size:9px;padding:4px 6px}
+  #scanTime{display:none}
+  
+  /* Columnas del scanner adaptadas */
+  .col-head{
+    grid-template-columns:1fr 70px 80px 60px;
+    gap:4px;
+    padding:8px 12px;
+    font-size:7px;
+  }
+  .col-head span:nth-child(4){display:none} /* ocultar CONFLUENCIA col-head */
+  .asset-row{
+    grid-template-columns:1fr 70px 80px 60px;
+    gap:4px;
+    padding:12px 12px;
+  }
+  .score-col{display:none} /* barra confluencia: solo en desktop */
+  .a-name{font-size:13px}
+  .a-cat{font-size:8px}
+  .a-price{font-size:12px}
+  .trend-pill{font-size:8px;padding:3px 6px}
+  .s-num{font-size:11px}
+  .op-tag{font-size:8px;padding:3px 5px}
+  .hint-row{font-size:8px;padding:6px;letter-spacing:1px}
+  
+  /* Rec card */
+  .rec-card{padding:14px}
+  .rec-name{font-size:18px}
+  .rec-label{font-size:7px;letter-spacing:3px}
+  .tf-grid{grid-template-columns:repeat(4,1fr);gap:3px}
+  .tf-cell{padding:6px 4px}
+  .tf-label{font-size:7px}
+  .tf-t{font-size:10px}
+  
+  /* Bridge MT5 compacto */
+  .bridge-body{max-height:180px}
+  
+  /* Access screen */
+  .access-box{width:100%;max-width:360px;padding:32px 24px}
+  .access-logo{font-size:38px;letter-spacing:6px}
+  
+  /* Admin panel */
+  .admin-body{grid-template-columns:1fr;padding:16px;gap:16px}
+  .admin-stats{grid-template-columns:repeat(3,1fr)}
+  .admin-row{grid-template-columns:1fr}
+  .admin-header{padding:14px 16px}
+  
+  /* Chat */
+  .chat-inp{font-size:14px}
+  .chat-send{font-size:10px;padding:9px 12px}
+  
+  /* Modal badges */
+  .modal-badges{gap:6px}
+  .modal-top{padding:16px 16px}
+  .modal-body{padding:16px 16px;gap:14px}
+  
+  /* Bridge modal */
+  #botBridgePanel > div[style*="grid-template-columns:1fr 1fr"]{
+    grid-template-columns:1fr !important;
+  }
+  
+  /* Scrollbar más pequeña */
+  .scanner-panel::-webkit-scrollbar{width:2px}
+}
+
+/* Extra pequeño: teléfonos < 380px */
+@media(max-width:380px){
+  .col-head{grid-template-columns:1fr 65px 75px 50px;padding:6px 8px}
+  .asset-row{grid-template-columns:1fr 65px 75px 50px;padding:10px 8px}
+  .h-right .btn-small{font-size:8px;padding:5px 8px}
+  .access-box{padding:28px 18px}
+  .access-logo{font-size:32px}
+  .rec-name{font-size:16px}
+  .modal-sym{font-size:20px}
+  .tf-grid{grid-template-columns:repeat(2,1fr)}
+}
+/* BRIDGE MT5 */
+.bridge-wrap{border-top:2px solid var(--accent);background:rgba(0,200,255,.02)}
+.bridge-header{padding:10px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
+.bridge-title{font-size:9px;letter-spacing:3px;color:var(--accent)}
+.bridge-count{font-size:11px;color:var(--yellow)}
+.bridge-body{padding:12px 16px;max-height:360px;overflow-y:auto}
+.bridge-body::-webkit-scrollbar{width:3px}
+.bridge-body::-webkit-scrollbar-thumb{background:var(--border2)}
+#bridgeToast{display:none;position:fixed;bottom:24px;right:24px;padding:12px 20px;z-index:500;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:2px;transition:opacity .4s;box-shadow:0 0 20px rgba(0,232,122,.4)}
+
+/* ═══════════════════════════════════════════
+   TOUCH & MOBILE UX IMPROVEMENTS
+   ═══════════════════════════════════════════ */
+.asset-row{min-height:52px;-webkit-tap-highlight-color:rgba(0,200,255,.08)}
+.btn-small,.btn-scan,.access-btn,.send-signal-btn{-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.scanner-panel,.chat-msgs,.clientes-list,.right-top{-webkit-overflow-scrolling:touch;scroll-behavior:smooth}
+.access-input,.login-input,.admin-input,.chat-inp,.capital-input{border-radius:0;-webkit-appearance:none}
+@media(max-width:760px){
+  .access-input,.login-input,.admin-input,.chat-inp,.capital-input{font-size:16px !important}
+}
+#mobileNav{
+  display:none;position:fixed;bottom:0;left:0;right:0;height:54px;
+  background:rgba(7,12,24,.97);border-top:1px solid var(--border2);
+  z-index:100;grid-template-columns:1fr 1fr 1fr;
+  backdrop-filter:blur(12px);
+}
+.mnav-btn{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;background:none;border:none;color:var(--dim);font-family:'Space Mono',monospace;
+  font-size:7px;letter-spacing:1px;cursor:pointer;transition:color .2s;padding:6px 0;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;text-transform:uppercase;
+}
+.mnav-btn.active{color:var(--accent)}
+.mnav-btn .micon{font-size:18px;line-height:1}
+@media(max-width:760px){
+  #mobileNav{display:grid}
+  #app .layout{padding-bottom:54px}
+  .scanner-panel{display:none}
+  .right-top{display:none}
+  .right-bottom{display:none}
+  .scanner-panel.mob-active{display:block}
+  .right-top.mob-active{display:block}
+  .right-bottom.mob-active{display:flex;flex-direction:column;min-height:400px}
+  #bridgeToast{bottom:66px}
+}
+</style>
+</head>
+<body>
+
+
+<!-- ═══════════════════════════════════════════════════
+     PANTALLA DE ACCESO APEX — Verificación Firebase
+     Fernando Sánchez | +573112603861 | @Fernandosan_84
+     ═══════════════════════════════════════════════════ -->
+<div id="apexAccessScreen">
+  <div class="access-box">
+    <div class="access-logo">APEX</div>
+    <div class="access-sub">Motor Institucional ICT / SMC</div>
+    <div class="access-autor">by Fernando Sánchez</div>
+    <div class="access-badge">⬡ ACCESO RESTRINGIDO ⬡</div>
+    <div class="access-divider"></div>
+    <div id="stepClave">
+      <label class="access-label">Clave de Acceso</label>
+      <input class="access-input" id="apexKeyInput" type="password"
+             placeholder="Ingresa tu clave de acceso"
+             onkeydown="if(event.key==='Enter')document.getElementById('apexMT5Input').focus()"
+             autocomplete="off" spellcheck="false">
+      <div style="height:14px"></div>
+      <label class="access-label">Usuario MT5 <span style="color:var(--dim);font-size:8px;letter-spacing:1px">(solo si tu clave está vinculada a MT5)</span></label>
+      <input class="access-input" id="apexMT5Input" type="text" inputmode="numeric"
+             placeholder="Número de cuenta Deriv / MT5"
+             onkeydown="if(event.key==='Enter')verificarClave()"
+             autocomplete="off" spellcheck="false" style="letter-spacing:3px">
+      <button class="access-btn" id="accessBtn" onclick="verificarClave()">
+        <span>▶ &nbsp; INGRESAR AL SISTEMA</span>
+      </button>
+    </div>
+    <div class="access-error" id="accessError">✕ &nbsp; Clave incorrecta. Contacta a Fernando Sánchez.</div>
+    <div class="access-error" id="accessErrorMT5" style="display:none;border-color:rgba(255,122,0,.3);background:rgba(255,122,0,.05);color:var(--orange)">🔒 &nbsp; Esta clave no es tuya. Contacta a Fernando Sánchez.</div>
+    <div class="access-vencida" id="accessVencida">⚠ &nbsp; Tu acceso ha vencido. Renueva tu suscripción.</div>
+    <div class="access-error" id="accessChecking" style="display:none;border-color:rgba(0,200,255,.2);background:rgba(0,200,255,.04);color:var(--accent)">⟳ &nbsp; Verificando...</div>
+    <div class="access-footer">
+      <div class="access-footer-name">Fernando Sánchez</div>
+      <div class="access-footer-contact">
+        WhatsApp: <a href="https://wa.me/573112603861" target="_blank">+573112603861</a><br>
+        Telegram: <a href="https://t.me/Fernandosan_84" target="_blank">@Fernandosan_84</a>
+      </div>
+      <a href="https://fernandosan84.github.io/apex-tradin/guia.html" target="_blank"
+         style="display:block;margin-top:16px;padding:10px;border:1px solid rgba(0,232,122,.35);color:var(--green);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3px;text-decoration:none;text-align:center;text-transform:uppercase;transition:all .25s"
+         onmouseover="this.style.background='rgba(0,232,122,.08)'"
+         onmouseout="this.style.background='transparent'">
+        📖 &nbsp; Ver Guía de Inicio
+      </a>
+    </div>
+    <div class="access-dots">
+      <div class="access-dot active"></div>
+      <div class="access-dot"></div>
+      <div class="access-dot"></div>
+    </div>
+  </div>
+</div>
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">APEX</div>
+    <div class="login-sub">Asistente Institucional · Deriv Synthetics</div>
+    <div class="login-field">
+      <label class="login-label">Tu API Token de Deriv</label>
+      <input class="login-input" id="tokenInput" type="password" placeholder="Pega aquí tu API token" onkeydown="if(event.key==='Enter')_apexConnect()">
+    </div>
+    <button class="login-btn" id="connectBtn" onclick="_apexConnect()">CONECTAR Y ESCANEAR</button>
+    <div class="login-error" id="loginError"></div>
+    <div class="login-note">
+      🔐 Tu token <strong>solo se pide una vez</strong> — queda guardado de forma segura y no lo tendrás que ingresar de nuevo.<br><br>
+      ✅ Solo necesita permiso <strong>Read</strong> — nunca puede hacer operaciones ni mover dinero.<br><br>
+      ¿No tienes token? <a href="https://app.deriv.com/account/api-token" target="_blank">Genéralo aquí</a> → activa solo <strong>Read</strong>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL REPORTE COMPLETO -->
+<div id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal" id="modalBox">
+    <div class="modal-top">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-sym" id="mSym">—</div>
+      <div class="modal-name" id="mName">—</div>
+      <div class="modal-badges">
+        <span class="modal-price" id="mPrice">—</span>
+        <span class="trend-pill" id="mTrend">—</span>
+        <span class="op-tag" id="mOp">—</span>
+        <span style="font-size:9px;color:var(--dim);letter-spacing:2px" id="mScore">—</span>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div>
+        <div class="modal-section-title">SEÑAL DE ENTRADA</div>
+        <div class="signal-box">
+          <div class="signal-dir" id="mDir">—</div>
+          <div style="font-size:10px;color:var(--dim);margin-top:2px" id="mConf">—</div>
+          <div class="signal-grid">
+            <div class="sig-item"><div class="sig-lbl">ENTRADA</div><div class="sig-val" id="mEntry" style="color:var(--accent)">—</div></div>
+            <div class="sig-item"><div class="sig-lbl">TAKE PROFIT</div><div class="sig-val" id="mTP" style="color:var(--green)">—</div></div>
+            <div class="sig-item"><div class="sig-lbl">STOP LOSS</div><div class="sig-val" id="mSL" style="color:var(--red)">—</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px">
+            <div class="sig-item"><div class="sig-lbl">RR RATIO</div><div class="sig-val" id="mRR" style="color:var(--yellow)">—</div></div>
+            <div class="sig-item"><div class="sig-lbl">RSI 1H</div><div class="sig-val" id="mRSI" style="color:var(--purple)">—</div></div>
+            <div class="sig-item"><div class="sig-lbl">ESTRUCTURA</div><div class="sig-val" id="mStruct" style="color:var(--purple);font-size:11px">—</div></div>
+          </div>
+        </div>
+        <div class="modal-section-title">ANÁLISIS MTF</div>
+        <div class="modal-tf-grid" id="mTFGrid"></div>
+        <div id="mTFAlerta" style="display:none;margin-top:8px;padding:8px 12px;font-size:10px;line-height:1.6;border-left:3px solid"></div>
+      </div>
+      <div>
+        <div class="modal-section-title">GRÁFICO 1H · VELAS</div>
+        <canvas id="modalChart"></canvas>
+        <div style="margin-top:16px">
+          <div class="modal-section-title">CONFLUENCIAS ICT/SMC</div>
+          <div id="mReasons"></div>
+        </div>
+      </div>
+      <div class="modal-full">
+        <div class="modal-section-title">NIVELES INSTITUCIONALES</div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px" id="mLevels"></div>
+      </div>
+      <div class="modal-full">
+        <!-- GESTIÓN DE CAPITAL -->
+        <div class="capital-box" id="capitalBox">
+          <div style="font-size:8px;letter-spacing:4px;color:var(--accent);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+            💰 GESTIÓN DE CAPITAL
+            <span style="flex:1;height:1px;background:rgba(0,200,255,0.2);display:block"></span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end">
+            <div>
+              <div style="font-size:8px;color:var(--dim);letter-spacing:2px;margin-bottom:6px">BALANCE DE CUENTA (USD)</div>
+              <input class="capital-input" id="capitalBalance" type="number" placeholder="Ej: 50" min="1" oninput="calcularLote()" value="">
+            </div>
+            <div>
+              <div style="font-size:8px;color:var(--dim);letter-spacing:2px;margin-bottom:6px">RIESGO POR TRADE</div>
+              <select id="capitalRiesgo" onchange="calcularLote()" style="width:100%;background:var(--bg);border:1px solid var(--border2);color:var(--white);font-family:'Space Mono',monospace;font-size:13px;padding:9px 12px;outline:none;cursor:pointer">
+                <option value="1">1% — Conservador</option>
+                <option value="2" selected>2% — Estándar</option>
+                <option value="3">3% — Agresivo</option>
+                <option value="5">5% — Máximo</option>
+              </select>
+            </div>
+          </div>
+          <div class="capital-row" id="capitalResultados" style="display:none">
+            <div class="capital-item">
+              <div class="capital-lbl">LOTE SUGERIDO</div>
+              <div class="capital-val" id="cLote" style="color:var(--accent)">—</div>
+            </div>
+            <div class="capital-item">
+              <div class="capital-lbl">RIESGO ($)</div>
+              <div class="capital-val" id="cRiesgoUSD" style="color:var(--yellow)">—</div>
+            </div>
+            <div class="capital-item">
+              <div class="capital-lbl">GANANCIA EST.</div>
+              <div class="capital-val" id="cGananciaUSD" style="color:var(--green)">—</div>
+            </div>
+          </div>
+          <div id="capitalAlerta" style="font-size:10px;margin-top:8px;display:none"></div>
+          <div class="riesgo-bar"><div class="riesgo-fill" id="riesgoBar" style="width:0%"></div></div>
+        </div>
+        <div id="botBridgePanel" style="background:rgba(155,89,255,0.06);border:1px solid rgba(155,89,255,0.3);padding:16px;margin-bottom:12px">
+          <div style="font-size:8px;letter-spacing:4px;color:var(--purple);margin-bottom:10px;display:flex;align-items:center;gap:8px">
+            PUENTE → APEX BOT MT5
+            <span style="flex:1;height:1px;background:rgba(155,89,255,0.3);display:block"></span>
+            <span style="font-size:7px;color:var(--green);letter-spacing:1px">🔥 FIREBASE ACTIVO</span>
+          </div>
+          <div style="background:rgba(0,232,122,0.06);border:1px solid rgba(0,232,122,0.2);padding:10px 12px;margin-bottom:10px;font-size:10px;color:var(--green);line-height:1.8">
+            ✅ Conexión automática via Firebase<br>
+            <span style="color:var(--text2)">El bot MT5 recibe las señales directamente — sin configuración adicional.</span>
+          </div>
+          <div id="botBridgeStatus" style="padding:7px 10px;background:var(--bg);border:1px solid var(--border);font-size:10px;color:var(--dim);margin-bottom:10px">Sin activaciones</div>
+          <div id="activeSignalsList" style="font-size:10px;color:var(--text2);margin-bottom:10px;min-height:20px"></div>
+          <button id="activateBotBtn" onclick="approveFromModal()" style="width:100%;background:linear-gradient(90deg,var(--purple),#6a3fd4);border:none;color:var(--white);padding:13px;font-family:Syne,sans-serif;font-weight:800;font-size:11px;letter-spacing:3px;cursor:pointer;transition:all .3s;text-transform:uppercase">
+            ✅ APROBAR → ENVIAR AL BOT MT5
+          </button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button class="send-signal-btn" id="sendSignalBtn" onclick="sendFullSignal()" style="margin-top:0">
+            📲 TELEGRAM
+          </button>
+          <button class="send-signal-btn" onclick="sendBothSignals()" style="margin-top:0;background:linear-gradient(90deg,var(--green),#00a86b)">
+            📲 + 🤖 AMBOS
+          </button>
+        </div>
+        <!-- Botón aprobar desde modal -->
+        <button id="modalApproveBtn" onclick="approveFromModal()" style="width:100%;margin-top:8px;background:linear-gradient(90deg,var(--purple),#6a3fd4);border:none;color:var(--white);padding:13px;font-family:'Syne',sans-serif;font-weight:800;font-size:11px;letter-spacing:3px;cursor:pointer;transition:all .3s">
+          ✅ APROBAR → MT5 (enviar al bot)
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+
+<!-- ═══ BARRA DE ACTUALIZACIÓN DEL BOT ═══ -->
+<div id="updateBar" style="display:none;background:linear-gradient(90deg,#1a0a00,#2a1200,#1a0a00);border-bottom:2px solid #ff7a00;padding:10px 20px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;animation:pulse-bar 2s ease-in-out infinite">
+  <div style="display:flex;align-items:center;gap:12px">
+    <span style="font-size:20px">⬆</span>
+    <div>
+      <div id="updateBarTitle" style="font-family:'Syne',sans-serif;font-weight:800;font-size:13px;color:#ffc300;letter-spacing:2px">APEX BOT PARA MT5 — ACTUALIZACIÓN DISPONIBLE</div>
+      <div id="updateBarSub" style="font-size:10px;color:#ff7a00;letter-spacing:1px;margin-top:2px">Nueva versión lista — Descárgala ahora e instálala en tu MT5</div>
+    </div>
+  </div>
+  <a id="updateBarBtn" href="actualizacion.html" style="background:linear-gradient(135deg,#ff7a00,#ffc300);color:#000;padding:10px 24px;font-family:'Syne',sans-serif;font-weight:800;font-size:11px;letter-spacing:3px;text-decoration:none;border-radius:4px;white-space:nowrap;flex-shrink:0">⬇ DESCARGAR AHORA</a>
+</div>
+<style>@keyframes pulse-bar{0%,100%{opacity:1}50%{opacity:.8}}</style>
+
+  <div class="header">
+    <div><div class="h-logo">AP<em>E</em>X <span>MOTOR INSTITUCIONAL · ICT/SMC · v4.1 · 6 TIMEFRAMES</span></div></div>
+    <div class="h-center">
+      <div class="live-indicator"><div class="live-dot"></div><span>LIVE</span></div>
+      <div class="ws-status ws-ok" id="wsStatus">DERIV CONECTADO</div>
+    </div>
+    <div class="h-right">
+      <div style="font-size:10px;color:var(--dim)" id="scanTime">—</div>
+      <!-- Auto-scan selector -->
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-size:9px;color:var(--dim);letter-spacing:2px">AUTO</span>
+        <select id="autoScanSel" onchange="setAutoScan()" style="background:var(--panel2);border:1px solid var(--border2);color:var(--text);font-family:'Space Mono',monospace;font-size:10px;padding:5px 8px;outline:none;cursor:pointer">
+          <option value="0">OFF</option>
+          <option value="5">5 min</option>
+          <option value="10">10 min</option>
+          <option value="15" selected>15 min ⟳ Bot</option>
+          <option value="30">30 min</option>
+        </select>
+        <span id="autoScanCountdown" style="font-size:10px;color:var(--accent);min-width:36px">—</span>
+      </div>
+      <button class="btn-small" onclick="toggleHistorial()">📋 HISTORIAL</button>
+      <button class="btn-small" onclick="window.open('https://fernandosan84.github.io/apex-tradin/guia.html','_blank')" style="border-color:rgba(0,232,122,.4);color:var(--green)">📖 GUÍA</button>
+      <button class="btn-small" onclick="testTelegram()">📲 TEST TG</button>
+      <button class="btn-small" id="btnConfigTG" onclick="abrirConfigTelegram()" style="border-color:var(--accent);color:var(--accent)">⚙ MI TELEGRAM</button>
+      <button id="adminBtn" style="display:none" onclick="abrirAdmin()">⚙ ADMIN</button>
+      <button class="btn-small" onclick="logout()">SALIR</button>
+      <button id="installBtn" onclick="installApp()" style="display:none;background:linear-gradient(135deg,var(--green),var(--accent));border:none;color:var(--bg);padding:8px 14px;font-family:'Syne',sans-serif;font-weight:700;font-size:10px;letter-spacing:2px;cursor:pointer">📲 INSTALAR APP</button>
+      <button class="btn-scan" id="scanBtn" onclick="runFullScan()">⟳ RESCANEAR</button>
+    </div>
+  </div>
+  <div class="layout">
+    <div class="scanner-panel">
+      <div class="section-header">
+        <span class="section-title">SCANNER · SINTÉTICOS DERIV</span>
+        <span class="section-count" id="opCount">—</span>
+      </div>
+      <!-- TOP SIGNAL CARD -->
+      <div class="top-signal-card" id="topSignalCard" onclick="selectRow(0);openModal(0)" style="display:none">
+        <div class="tsc-badge">★ TOP SEÑAL DEL DÍA</div>
+        <div>
+          <div class="tsc-sym" id="tscSym">—</div>
+          <div class="tsc-cat" id="tscCat">—</div>
+          <div class="tsc-price" id="tscPrice">—</div>
+          <div class="tsc-dir" id="tscDir">—</div>
+        </div>
+        <div>
+          <div class="tsc-conf-lbl">CONFLUENCIA INSTITUCIONAL</div>
+          <div class="tsc-conf-track"><div class="tsc-conf-fill" id="tscConfFill" style="width:0%"></div></div>
+          <div class="tsc-conf-pct" id="tscConfPct">—</div>
+          <div class="tsc-conf-sub" id="tscConfSub">—</div>
+        </div>
+        <div>
+          <div class="tsc-grid" id="tscGrid">
+            <div class="tsc-item"><div class="tsc-il">PRECIO</div><div class="tsc-iv" id="tscP" style="color:#ff4466">—</div></div>
+            <div class="tsc-item"><div class="tsc-il">R/R</div><div class="tsc-iv" id="tscRR" style="color:#a855f7">—</div></div>
+            <div class="tsc-item"><div class="tsc-il">TAKE PROFIT</div><div class="tsc-iv" id="tscTP" style="color:#00ff78">—</div></div>
+            <div class="tsc-item"><div class="tsc-il">STOP LOSS</div><div class="tsc-iv" id="tscSL" style="color:#ff4466">—</div></div>
+          </div>
+        </div>
+      </div>
+      <!-- CARDS GRID -->
+      <div class="cards-grid" id="scannerRows">
+        <div class="scan-loading"><div class="spin-ring"></div><div class="scan-msg">Iniciando scanner...<br><em>Conectando a Deriv WebSocket</em></div></div>
+      </div>
+
+      <!-- ⚡ BRIDGE MT5 — Cola de Aprobación -->
+      <div class="bridge-wrap">
+        <div class="bridge-header">
+          <span class="bridge-title">⚡ COLA APROBACIÓN → MT5</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <button id="btnBridgeMode" onclick="toggleBridgeMode()" style="background:transparent;border:1px solid var(--border2);color:var(--text2);padding:4px 12px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;cursor:pointer;transition:all .3s">👤 MODO: MANUAL</button>
+            <span class="bridge-count" id="bridgeCount">0 pendientes</span>
+          </div>
+        </div>
+        <div style="padding:4px 16px 6px;font-size:9px;letter-spacing:1px" id="bridgeModeInd" style="color:var(--dim)">MANUAL — Tú decides qué señales enviar al bot</div>
+        <div class="bridge-body" id="bridgePanel">
+          <div style="color:var(--dim);font-size:10px;letter-spacing:1px;padding:10px 0;text-align:center">
+            Iniciando monitor... (Score ≥80% + OPERABLE)
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="right-top" id="rightTop">
+      <div class="rec-card">
+        <div class="rec-label">▸ RECOMENDACIÓN DEL DÍA</div>
+        <div class="rec-name" id="recName">Analizando mercado...</div>
+        <div class="rec-dir" id="recDir" style="color:var(--dim)">—</div>
+        <div class="conf-row">
+          <div class="conf-lbl">CONFLUENCIA INSTITUCIONAL</div>
+          <div class="conf-track"><div class="conf-bar" id="confBar" style="width:0%"></div></div>
+          <div class="conf-pct" id="confPct">—</div>
+        </div>
+        <div class="rec-bullets" id="recBullets">El motor está ejecutando el análisis multi-timeframe...</div>
+      </div>
+      <div style="margin-bottom:16px">
+        <div class="mtf-title"><span>ANÁLISIS MULTI-TIMEFRAME</span><span id="mtfAsset" style="color:var(--white)">—</span></div>
+        <div class="macro-toggle-bar">
+          <span>📅 MACRO</span>
+          <button class="btn-macro-toggle" id="btnMacroToggle" onclick="toggleMacroTF()">MN + W1 ON</button>
+        </div>
+        <div class="tf-grid" id="tfGrid"></div>
+      </div>
+      <div>
+        <div class="mtf-title"><span>NIVELES INSTITUCIONALES</span></div>
+        <div class="levels-list" id="levelsList"></div>
+      </div>
+    </div>
+    <div class="right-bottom">
+      <div class="chat-wrap">
+        <div class="chat-header">CONSULTOR APEX · ICT / SMC</div>
+        <div class="chat-msgs" id="chatMsgs">
+          <div class="cm apex"><div class="cm-from">APEX</div>Conectando a Deriv. Ejecutando análisis institucional...</div>
+        </div>
+        <div class="chat-foot">
+          <input class="chat-inp" id="chatInp" placeholder="Ej: ¿Por qué V75? ¿Estructura Crash 1000?" onkeydown="if(event.key==='Enter')sendChat()">
+          <button class="chat-send" onclick="sendChat()">ASK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Variables globales de sesión — visibles desde todos los scripts -->
+<script>
+var _apexClave = '';
+var _apexEsAdmin = false;
+</script>
+
+<script type="module">
+// ═══════════════════════════════════════════════════════════
+//  APEX SCANNER — Verificación Firebase
+//  Las claves viven en Firebase, no en este archivo
+// ═══════════════════════════════════════════════════════════
+
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBT_gwOyBsjHdJNWBVHIfQBt8AE_Acom5k",
+  authDomain: "apex-scanner.firebaseapp.com",
+  projectId: "apex-scanner",
+  storageBucket: "apex-scanner.firebasestorage.app",
+  messagingSenderId: "277381043901",
+  appId: "1:277381043901:web:59d645a88dfc03060149d4",
+  measurementId: "G-ZQYMYVQV2M"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+// ── Verificar clave contra Firebase ───────────────────────
+async function verificarEnFirebase(clave, mt5Ingresado){
+  // Buscar en colección 'clientes'
+  const refCli = doc(db, 'clientes', clave.toUpperCase());
+  const snapCli = await getDoc(refCli);
+  if(snapCli.exists()){
+    const data = snapCli.data();
+    return evaluarDoc(data, mt5Ingresado);
+  }
+  // Buscar en colección 'demos'
+  const refDemo = doc(db, 'demos', clave.toUpperCase());
+  const snapDemo = await getDoc(refDemo);
+  if(snapDemo.exists()){
+    const data = snapDemo.data();
+    return evaluarDoc(data, mt5Ingresado);
+  }
+  return { ok: false, razon: 'invalida' };
+}
+
+function evaluarDoc(data, mt5Ingresado){
+  // Verificar vigencia
+  if(data.vencimiento !== 'LIFE'){
+    const v = String(data.vencimiento); // YYYYMMDD
+    const hoy = new Date();
+    const vence = new Date(
+      parseInt(v.substring(0,4)),
+      parseInt(v.substring(4,6))-1,
+      parseInt(v.substring(6,8)), 23,59,59
+    );
+    if(hoy > vence) return { ok: false, razon: 'vencida' };
+  }
+  // Verificar MT5 — funciona si está guardado como texto O como número
+  const mt5Firebase = String(data.mt5 || '').trim();
+  if(mt5Firebase !== ''){
+    if(!mt5Ingresado) return { ok: false, razon: 'mt5_requerido' };
+    if(String(mt5Ingresado).trim() !== mt5Firebase) return { ok: false, razon: 'mt5_incorrecto' };
+  }
+  return { ok: true, esAdmin: data.esAdmin || false };
+}
+
+// ── Función principal de verificación ─────────────────────
+window.verificarClave = async function(){
+  const inputClave   = document.getElementById('apexKeyInput');
+  const inputMT5     = document.getElementById('apexMT5Input');
+  const errDiv       = document.getElementById('accessError');
+  const errMT5Div    = document.getElementById('accessErrorMT5');
+  const venDiv       = document.getElementById('accessVencida');
+  const checkingDiv  = document.getElementById('accessChecking');
+  const btn          = document.getElementById('accessBtn');
+  const clave        = inputClave.value.trim().toUpperCase();
+  const mt5Ing       = inputMT5.value.trim();
+
+  errDiv.style.display='none';
+  errMT5Div.style.display='none';
+  venDiv.style.display='none';
+  checkingDiv.style.display='none';
+
+  if(!clave){ inputClave.style.borderColor='var(--red)'; return; }
+
+  // Animación dots
+  const dots = document.querySelectorAll('.access-dot');
+  let di=0;
+  const di_int = setInterval(()=>{
+    dots.forEach(d=>d.classList.remove('active'));
+    dots[di%3].classList.add('active'); di++;
+  }, 300);
+
+  btn.disabled = true;
+  checkingDiv.style.display = 'block';
+
+  try {
+    const resultado = await verificarEnFirebase(clave, mt5Ing);
+    clearInterval(di_int);
+    dots.forEach((d,i)=>{ d.classList.toggle('active',i===0); });
+    btn.disabled = false;
+    checkingDiv.style.display = 'none';
+
+    if(resultado.ok){
+      accesoConcedido(clave, resultado.esAdmin);
+    } else {
+      inputClave.style.borderColor = 'var(--red)';
+      if(resultado.razon === 'vencida'){
+        venDiv.style.display = 'block';
+        inputClave.value = '';
+      } else if(resultado.razon === 'mt5_incorrecto'){
+        inputMT5.style.borderColor = 'var(--orange)';
+        inputMT5.value = '';
+        errMT5Div.style.display = 'block';
+      } else if(resultado.razon === 'mt5_requerido'){
+        inputMT5.style.borderColor = 'var(--red)';
+        errDiv.textContent = '✕ \u00a0 Ingresa tu número de cuenta MT5.';
+        errDiv.style.display = 'block';
+      } else {
+        inputClave.value = '';
+        errDiv.textContent = '✕ \u00a0 Clave incorrecta. Contacta a Fernando Sánchez.';
+        errDiv.style.display = 'block';
+      }
+    }
+  } catch(e){
+    clearInterval(di_int);
+    btn.disabled = false;
+    checkingDiv.style.display = 'none';
+    errDiv.textContent = '✕ \u00a0 Error de conexión. Verifica tu internet.';
+    errDiv.style.display = 'block';
+    console.error('Firebase error:', e);
+  }
+};
+
+// ── Variables de sesión ya declaradas globalmente arriba ──
+
+// ── CIFRADO AES-GCM — token nunca se guarda en texto plano ──
+// La clave de cifrado se deriva de la clave de licencia del cliente
+// Así solo el propio cliente puede descifrar su token
+const APEX_SALT = 'APEX_DERIV_SALT_2026_FS';
+
+async function _deriveKey(clave){
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw', enc.encode(clave.toUpperCase()+APEX_SALT),
+    {name:'PBKDF2'}, false, ['deriveKey']
+  );
+  return crypto.subtle.deriveKey(
+    {name:'PBKDF2', salt:enc.encode(APEX_SALT), iterations:100000, hash:'SHA-256'},
+    keyMaterial, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']
+  );
+}
+
+async function _cifrar(texto, clave){
+  const key = await _deriveKey(clave);
+  const iv  = crypto.getRandomValues(new Uint8Array(12));
+  const enc = new TextEncoder();
+  const cifrado = await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, enc.encode(texto));
+  // Combinar iv + cifrado en base64
+  const buf = new Uint8Array(iv.length + cifrado.byteLength);
+  buf.set(iv, 0); buf.set(new Uint8Array(cifrado), iv.length);
+  return btoa(String.fromCharCode(...buf));
+}
+
+async function _descifrar(b64, clave){
+  const key = await _deriveKey(clave);
+  const buf = Uint8Array.from(atob(b64), c=>c.charCodeAt(0));
+  const iv  = buf.slice(0, 12);
+  const datos = buf.slice(12);
+  const desc = await crypto.subtle.decrypt({name:'AES-GCM', iv}, key, datos);
+  return new TextDecoder().decode(desc);
+}
+
+function accesoConcedido(clave, esAdmin){
+  _apexClave = clave;
+  _apexEsAdmin = esAdmin;
+  sessionStorage.setItem('apex_auth', btoa(clave+':'+Date.now()));
+  sessionStorage.setItem('apex_clave', clave);
+  const screen = document.getElementById('apexAccessScreen');
+  screen.style.transition = 'opacity .6s ease, transform .6s ease';
+  screen.style.opacity = '0';
+  screen.style.transform = 'scale(1.04)';
+  setTimeout(async ()=>{
+    screen.style.display = 'none';
+    console.log('%cAPEX ACCESS GRANTED','color:#00c8ff;font-size:14px;font-weight:bold');
+    await intentarCargarToken(clave);
+  }, 600);
+}
+
+// ── Cargar token desde Firebase y descifrar ────────────────
+async function intentarCargarToken(clave){
+  try{
+    const url=`https://firestore.googleapis.com/v1/projects/apex-scanner/databases/(default)/documents/tokens/${clave.toUpperCase()}`;
+    const resp=await fetch(url);
+    if(!resp.ok) return mostrarPanelToken();
+    const data=await resp.json();
+    const tokenCifrado=data.fields?.token?.stringValue||'';
+    if(!tokenCifrado||tokenCifrado.length<10) return mostrarPanelToken();
+    // Descifrar con la clave del cliente
+    const tokenReal = await _descifrar(tokenCifrado, clave);
+    if(!tokenReal||tokenReal.length<10) return mostrarPanelToken();
+    // Token descifrado — conectar directo
+    document.getElementById('tokenInput').value=tokenReal;
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('app').style.display='block';
+    setTimeout(()=>{ window.connect(); },300);
+    console.log('%cAPEX TOKEN RESTAURADO (cifrado)','color:#00e87a;font-size:12px');
+  }catch(e){
+    // Si falla el descifrado — pedir token de nuevo
+    mostrarPanelToken();
+  }
+}
+
+// ── Mostrar panel de token (primera vez) ──────────────────
+function mostrarPanelToken(){
+  document.getElementById('loginScreen').style.display='flex';
+}
+
+// ── Guardar token cifrado en Firebase ─────────────────────
+window.guardarTokenFirebase = async function(clave, token){
+  if(!clave||!token||token.length<10) return;
+  try{
+    // Cifrar el token antes de guardarlo — nunca se guarda en texto plano
+    const tokenCifrado = await _cifrar(token, clave);
+    const url=`https://firestore.googleapis.com/v1/projects/apex-scanner/databases/(default)/documents/tokens/${clave.toUpperCase()}`;
+    const body={fields:{
+      token:      {stringValue: tokenCifrado},  // cifrado AES-GCM
+      clave:      {stringValue: clave.toUpperCase()},
+      actualizado:{stringValue: new Date().toISOString()}
+      // NO se guarda el token en texto plano — nunca
+    }};
+    await fetch(url,{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body)
+    });
+    console.log('%cAPEX TOKEN CIFRADO Y GUARDADO','color:#00e87a;font-size:11px');
+  }catch(e){ console.error('Error guardando token:', e); }
+}
+
+// ── Restaurar sesión (misma pestaña) ──────────────────────
+(function checkSession(){
+  const saved = sessionStorage.getItem('apex_auth');
+  const clave = sessionStorage.getItem('apex_clave');
+  if(!saved) return;
+  try{
+    const ts = parseInt(atob(saved).split(':')[1]);
+    const horasActivo = (Date.now() - ts) / 3600000;
+    if(horasActivo < 12){
+      document.getElementById('apexAccessScreen').style.display = 'none';
+      if(clave){ _apexClave=clave; intentarCargarToken(clave); }
+    } else {
+      sessionStorage.removeItem('apex_auth');
+      sessionStorage.removeItem('apex_clave');
+    }
+  } catch(e){
+    sessionStorage.removeItem('apex_auth');
+    sessionStorage.removeItem('apex_clave');
+  }
+})();
+
+</script>
+<script>
+const DERIV_WS_URL='wss://ws.binaryws.com/websockets/v3?app_id=1089';
+// ── URL del Cloudflare Worker — reemplaza con tu URL real ───
+const WORKER_URL='https://apex-scanner.fernandosan84.workers.dev';
+const TG_TOKEN=atob("ODQwNjg2MzI3OTpBQUYxY0FnaTJ2cVRQZnhuU0dTUzJ1eVZfQnlVVUhleV9BZw==");
+const TG_CHAT=atob("LTEwMDM3OTM1Nzc3OTI="); // ✅ CANAL DE SEÑALES FERNANDO @Fernandosan84Alertas
+const CANDLE_TIMEOUT_MS=8000;
+const SYNTHETICS=[
+  // ── VOLATILITY CLÁSICOS ─────────────────────────────
+  {id:'R_10',sym:'V10',name:'Volatility 10',cat:'VOLATILITY'},
+  {id:'R_25',sym:'V25',name:'Volatility 25',cat:'VOLATILITY'},
+  {id:'R_50',sym:'V50',name:'Volatility 50',cat:'VOLATILITY'},
+  {id:'R_75',sym:'V75',name:'Volatility 75',cat:'VOLATILITY'},
+  {id:'R_100',sym:'V100',name:'Volatility 100',cat:'VOLATILITY'},
+  // ── VOLATILITY 1 SEGUNDO ────────────────────────────
+  {id:'1HZ10V',sym:'V10(1s)',name:'Volatility 10 (1s)',cat:'VOLATILITY'},
+  {id:'1HZ25V',sym:'V25(1s)',name:'Volatility 25 (1s)',cat:'VOLATILITY'},
+  {id:'1HZ50V',sym:'V50(1s)',name:'Volatility 50 (1s)',cat:'VOLATILITY'},
+  {id:'1HZ75V',sym:'V75(1s)',name:'Volatility 75 (1s)',cat:'VOLATILITY'},
+  {id:'1HZ100V',sym:'V100(1s)',name:'Volatility 100 (1s)',cat:'VOLATILITY'},
+  {id:'1HZ150V',sym:'V150(1s)',name:'Volatility 150 (1s)',cat:'VOLATILITY'},
+  {id:'1HZ250V',sym:'V250(1s)',name:'Volatility 250 (1s)',cat:'VOLATILITY'},
+  // ── BOOM / CRASH ─────────────────────────────────────
+  {id:'BOOM300N',sym:'BM300',name:'Boom 300',cat:'BOOM/CRASH'},
+  {id:'BOOM500',sym:'BM500',name:'Boom 500',cat:'BOOM/CRASH'},
+  {id:'BOOM600',sym:'BM600',name:'Boom 600',cat:'BOOM/CRASH'},
+  {id:'BOOM900',sym:'BM900',name:'Boom 900',cat:'BOOM/CRASH'},
+  {id:'BOOM1000',sym:'BM1000',name:'Boom 1000',cat:'BOOM/CRASH'},
+  {id:'CRASH300N',sym:'CR300',name:'Crash 300',cat:'BOOM/CRASH'},
+  {id:'CRASH500',sym:'CR500',name:'Crash 500',cat:'BOOM/CRASH'},
+  {id:'CRASH600',sym:'CR600',name:'Crash 600',cat:'BOOM/CRASH'},
+  {id:'CRASH900',sym:'CR900',name:'Crash 900',cat:'BOOM/CRASH'},
+  {id:'CRASH1000',sym:'CR1000',name:'Crash 1000',cat:'BOOM/CRASH'},
+  // ── STEP INDEX — IDs verificados contra MT5 ──────────
+  // stpRNG  = ~7,794  → Step Index (100)
+  // stpRNG4 = ~10,165 → Step Index 200
+  // stpRNG3 = ~11,430 → Step Index 300
+  // stpRNG5 = ~6,553  → Step Index 400
+  // stpRNG2 = ~6,421  → Step Index 500
+  {id:'stpRNG',  sym:'STEP100', name:'Step Index 100', cat:'STEP'},
+  {id:'stpRNG2', sym:'STEP200', name:'Step Index 200', cat:'STEP'},
+  {id:'stpRNG3', sym:'STEP300', name:'Step Index 300', cat:'STEP'},
+  {id:'stpRNG4', sym:'STEP400', name:'Step Index 400', cat:'STEP'},
+  {id:'stpRNG5', sym:'STEP500', name:'Step Index 500', cat:'STEP'},
+  // ── JUMP INDEX ───────────────────────────────────────
+  {id:'JD10',sym:'JMP10',name:'Jump 10',cat:'JUMP'},
+  {id:'JD25',sym:'JMP25',name:'Jump 25',cat:'JUMP'},
+  {id:'JD50',sym:'JMP50',name:'Jump 50',cat:'JUMP'},
+  {id:'JD75',sym:'JMP75',name:'Jump 75',cat:'JUMP'},
+  {id:'JD100',sym:'JMP100',name:'Jump 100',cat:'JUMP'},
+  // ── RANGE BREAK ─────────────────────────────────────
+  {id:'RDBULL100',sym:'RB100↑',name:'Range Break 100 Bull',cat:'RANGE'},
+  {id:'RDBEAR100',sym:'RB100↓',name:'Range Break 100 Bear',cat:'RANGE'},
+  {id:'RDBULL200',sym:'RB200↑',name:'Range Break 200 Bull',cat:'RANGE'},
+  {id:'RDBEAR200',sym:'RB200↓',name:'Range Break 200 Bear',cat:'RANGE'},
+];
+let ws=null,apiToken='',livePrices={},analysisResults=[],selectedIdx=0;
+let pendingCandles={},candleData={},scanInProgress=false,tickSubs={};
+let scanExpected=0,scanReceived=0,scanTimeoutId=null,modalAsset=null,alertsSent={};
+
+// Intervalos globales para limpiar en reconexión
+let keepAliveInterval=null,watchdogInterval=null,lastTickTime={};
+
+function connect(isReconnect=false){
+  if(keepAliveInterval) clearInterval(keepAliveInterval);
+  if(watchdogInterval)  clearInterval(watchdogInterval);
+  if(!isReconnect){
+    const t=document.getElementById('tokenInput').value.trim();
+    if(!t){showError('Ingresa tu API token.');return}
+    apiToken=t;
+    // Guardar token en Firebase vinculado a la clave del cliente
+    if(_apexClave && typeof window.guardarTokenFirebase === 'function') window.guardarTokenFirebase(_apexClave, t);
+  }
+  setConnectState(true);
+  ws=new WebSocket(DERIV_WS_URL);
+  ws.onopen=()=>{
+    ws.send(JSON.stringify({authorize:apiToken}));
+    // KEEPALIVE: ping cada 25s para evitar timeout
+    keepAliveInterval=setInterval(()=>{
+      if(ws&&ws.readyState===WebSocket.OPEN){
+        try{ws.send(JSON.stringify({ping:1}));}catch(e){}
+      }
+    },25000);
+    // WATCHDOG: si un activo lleva +90s sin tick, re-suscribir
+    watchdogInterval=setInterval(()=>{
+      if(!ws||ws.readyState!==WebSocket.OPEN) return;
+      const ahora=Date.now();
+      SYNTHETICS.forEach(asset=>{
+        const ultimo=lastTickTime[asset.id]||0;
+        if(ultimo>0&&ahora-ultimo>90000){
+          try{ws.send(JSON.stringify({ticks:asset.id,subscribe:1}));}catch(e){}
+        }
+      });
+    },30000);
+  };
+  ws.onmessage=e=>handleMessage(JSON.parse(e.data));
+  ws.onerror=()=>{if(!isReconnect)showError('Error de conexión.');setConnectState(false);};
+  ws.onclose=()=>{
+    if(keepAliveInterval) clearInterval(keepAliveInterval);
+    if(watchdogInterval)  clearInterval(watchdogInterval);
+    setWsStatus('DESCONECTADO — Reconectando...','ws-err');
+    if(apiToken) setTimeout(()=>{setWsStatus('RECONECTANDO...','ws-warn');connect(true);},3000);
+  };
+}
+
+
+function handleMessage(msg){
+  if(msg.error){
+    if(msg.msg_type==='authorize'){showError('Token inválido.');setConnectState(false);ws.close()}
+    if(msg.req_id&&pendingCandles[msg.req_id]){
+      const{symbol,tf}=pendingCandles[msg.req_id];
+      if(!candleData[symbol])candleData[symbol]={};
+      candleData[symbol][tf]=[];
+      clearTimeout(pendingCandles[msg.req_id].timer);
+      delete pendingCandles[msg.req_id];checkScanComplete();
+    }
+    return;
+  }
+  if(msg.msg_type==='authorize'){
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('app').style.display='block';
+    setWsStatus('DERIV CONECTADO','ws-ok');runFullScan();return;
+  }
+  if(msg.msg_type==='tick'){
+    const t=msg.tick;
+    // Actualizar top card si corresponde al activo top
+    if(analysisResults.length&&t.symbol===analysisResults[0].id){
+      const tp=document.getElementById('tscPrice');
+      const tp2=document.getElementById('tscP');
+      const top=analysisResults[0];
+      if(tp){tp.textContent=fmtP(t.symbol,t.quote);tp.classList.add('live');setTimeout(()=>tp.classList.remove('live'),400);}
+      if(tp2)tp2.textContent=fmtP(t.symbol,t.quote);
+    }
+    const precio=t.quote;
+    let precioValido=true;
+    if(t.symbol.includes('CRASH')||t.symbol.includes('BOOM')){
+      // Crash/Boom todos: precio entre 500 y 50000
+      precioValido=precio>500&&precio<50000;
+    } else if(t.symbol.startsWith('stpRNG')||t.symbol==='stpRNG'){
+      // Step Index: precio entre 1000 y 500000
+      precioValido=precio>1000&&precio<500000;
+    } else if(t.symbol.startsWith('JD')){
+      // Jump Index: precio entre 100 y 100000
+      precioValido=precio>100&&precio<100000;
+    }
+    if(precioValido){
+      livePrices[t.symbol]=precio;
+      lastTickTime[t.symbol]=Date.now();
+    }
+    if(msg.subscription?.id)tickSubs[t.symbol]=msg.subscription.id;
+    const el=document.getElementById('price-'+t.symbol);
+    if(el){el.textContent=fmtP(t.symbol,t.quote);el.classList.remove('live');void el.offsetWidth;el.classList.add('live')}
+    const ar=analysisResults.find(a=>a.id===t.symbol);if(ar)ar.price=t.quote;
+    if(modalAsset&&modalAsset.id===t.symbol){const mp=document.getElementById('mPrice');if(mp)mp.textContent=fmtP(t.symbol,t.quote)}
+    // Actualizar precio en panel derecho si es el activo seleccionado
+    if(analysisResults[selectedIdx]&&analysisResults[selectedIdx].id===t.symbol){
+      const rp=document.getElementById('recPrecioVivo');
+      if(rp)rp.textContent=fmtP(t.symbol,t.quote);
+    }
+    return;
+  }
+  if(msg.msg_type==='candles'){
+    const id=msg.req_id;
+    if(pendingCandles[id]){
+      const{symbol,tf}=pendingCandles[id];
+      if(!candleData[symbol])candleData[symbol]={};
+      candleData[symbol][tf]=msg.candles||[];
+      clearTimeout(pendingCandles[id].timer);delete pendingCandles[id];checkScanComplete();
+    }
+    return;
+  }
+}
+
+function runFullScan(){
+  if(scanInProgress)return;
+  scanInProgress=true;candleData={};scanExpected=0;scanReceived=0;
+  if(scanTimeoutId){clearTimeout(scanTimeoutId);scanTimeoutId=null}
+  document.getElementById('scanBtn').disabled=true;
+  // v4.1 — 6 timeframes: Mensual+Semanal+Diario+1H+M15+5M
+  const TFs=[2592000,604800,86400,3600,900,300];
+  const TFL={2592000:'MES',604800:'SEM',86400:'1DÍA',3600:'1H',900:'M15',300:'5M'};
+  const totalTFs=SYNTHETICS.length*TFs.length;
+  document.getElementById('scannerRows').innerHTML=`<div class="scan-loading"><div class="spin-ring"></div><div class="scan-msg" id="scanMsg">Solicitando datos...<br><em>0/${totalTFs} timeframes (6 TF)</em></div></div>`;
+  Object.values(tickSubs).forEach(id=>{try{ws.send(JSON.stringify({forget:id}))}catch(e){}});tickSubs={};
+  let reqId=1000,delay=500;
+  SYNTHETICS.forEach(asset=>{
+    TFs.forEach(tf=>{
+      scanExpected++;const id=reqId++;
+      const timer=setTimeout(()=>{
+        if(pendingCandles[id]){const{symbol,tf:t}=pendingCandles[id];if(!candleData[symbol])candleData[symbol]={};if(!candleData[symbol][t])candleData[symbol][t]=[];delete pendingCandles[id];checkScanComplete()}
+      },delay+CANDLE_TIMEOUT_MS);
+      pendingCandles[id]={symbol:asset.id,tf,timer};
+      setTimeout(()=>{
+        try{ws.send(JSON.stringify({ticks_history:asset.id,adjust_start_time:1,count:100,end:'latest',granularity:tf,style:'candles',req_id:id}))}
+        catch(e){if(pendingCandles[id]){clearTimeout(pendingCandles[id].timer);delete pendingCandles[id];checkScanComplete()}}
+      },delay);delay+=120;
+    });
+  });
+  scanTimeoutId=setTimeout(()=>{
+    if(scanInProgress){Object.keys(pendingCandles).forEach(id=>{const{symbol,tf}=pendingCandles[id];if(!candleData[symbol])candleData[symbol]={};if(!candleData[symbol][tf])candleData[symbol][tf]=[];clearTimeout(pendingCandles[id].timer);delete pendingCandles[id]});processAnalysisWorker()}
+  },delay+20000);
+}
+
+function checkScanComplete(){
+  scanReceived++;
+  const total=SYNTHETICS.length*6; // v4.1: 6 TFs
+  const pct=Math.round(scanReceived/total*100);
+  const el=document.getElementById('scanMsg');
+  if(el)el.innerHTML=`Analizando estructura institucional...<br><em>${scanReceived}/${total} timeframes (${pct}%) — MES+SEM+1D+1H+M15+5M</em>`;
+  if(scanReceived>=total){if(scanTimeoutId){clearTimeout(scanTimeoutId);scanTimeoutId=null}setTimeout(processAnalysisWorker,200)}
+}
+
+function analyzeCandles(candles){
+  if(!candles||candles.length<20)return null;
+  const C=candles.map(c=>c.close),H=candles.map(c=>c.high),L=candles.map(c=>c.low),n=candles.length;
+  const e20=ema(C,20),e50=ema(C,50),e200=ema(C,Math.min(100,n));
+  const lc=C[n-1],le20=e20[n-1],le50=e50[n-1],le200=e200[n-1];
+  let trend;
+  if(lc>le20&&le20>le50&&le50>le200) trend='ALCISTA';
+  else if(lc<le20&&le20<le50&&le50<le200) trend='BAJISTA';
+  else if(lc>le20&&le20>le50) trend='ALCISTA';
+  else if(lc<le20&&le20<le50) trend='BAJISTA';
+  else trend='RANGO';
+  const rsi=calcRSI(C,14);
+  const lastRSI=rsi[n-1];
+  const rsiConfirm=(trend==='ALCISTA'&&lastRSI>50)||(trend==='BAJISTA'&&lastRSI<50);
+  const rsiOB=lastRSI>70;
+  const rsiOS=lastRSI<30;
+  const sH=swings(H,3,true),sL=swings(L,3,false);
+  let struct='RANGO',bos=false,choch=false;
+  if(sH.length>=2&&sL.length>=2){
+    const[lHH,pHH]=[sH[sH.length-1],sH[sH.length-2]];
+    const[lLL,pLL]=[sL[sL.length-1],sL[sL.length-2]];
+    if(lHH>pHH&&lLL>pLL){struct='HH/HL';bos=lc>pHH}
+    else if(lHH<pHH&&lLL<pLL){struct='LH/LL';bos=lc<pLL}
+    else if(trend==='ALCISTA'&&lHH<pHH){struct='ChoCH↓';choch=true}
+    else if(trend==='BAJISTA'&&lLL>pLL){struct='ChoCH↑';choch=true}
+  }
+  let obHigh=null,obLow=null;
+  for(let i=n-20;i<n-2;i++){
+    if(i<1||!candles[i-1])continue;
+    const impulso=Math.abs(candles[i+1].close-candles[i].close)/candles[i].close;
+    if(impulso<0.0008)continue;
+    const up=candles[i+1].close>candles[i].close;
+    const dn=candles[i+1].close<candles[i].close;
+    if(up&&candles[i-1].close<candles[i-1].open){obHigh=candles[i-1].high;obLow=candles[i-1].low}
+    else if(dn&&candles[i-1].close>candles[i-1].open){obHigh=candles[i-1].high;obLow=candles[i-1].low}
+  }
+  let fvg=false,fvgSize=0;
+  for(let i=1;i<n-1;i++){
+    const gap=Math.abs(candles[i+1].low-candles[i-1].high);
+    const pct=gap/candles[i].close;
+    if(pct>0.001){fvg=true;fvgSize=Math.max(fvgSize,pct);break}
+  }
+  const rH=Math.max(...H.slice(-30)),rL=Math.min(...L.slice(-30));
+  const bsl=H.slice(-5).some(h=>Math.abs(h-rH)/rH<0.001);
+  const ssl=L.slice(-5).some(l=>Math.abs(l-rL)/rL<0.001);
+  const momentum=C[n-1]-C[n-5];
+  const momentumConfirm=(trend==='ALCISTA'&&momentum>0)||(trend==='BAJISTA'&&momentum<0);
+  return{trend,struct,bos,choch,obHigh,obLow,fvg,fvgSize,bsl,ssl,recentHigh:rH,recentLow:rL,lastClose:lc,rsi:lastRSI,rsiConfirm,rsiOB,rsiOS,momentumConfirm};
+}
+
+function calcRSI(closes,period){
+  const rsi=[];
+  for(let i=0;i<closes.length;i++){
+    if(i<period){rsi.push(50);continue}
+    let gains=0,losses=0;
+    for(let j=i-period+1;j<=i;j++){
+      const diff=closes[j]-closes[j-1];
+      if(diff>0)gains+=diff;else losses+=Math.abs(diff);
+    }
+    const avgGain=gains/period,avgLoss=losses/period;
+    if(avgLoss===0){rsi.push(100);continue}
+    const rs=avgGain/avgLoss;
+    rsi.push(100-(100/(1+rs)));
+  }
+  return rsi;
+}
+function ema(d,p){const k=2/(p+1);let pr=d.slice(0,p).reduce((a,b)=>a+b,0)/p;return d.map((v,i)=>{if(i<p)return pr;pr=v*k+pr*(1-k);return pr})}
+function swings(arr,lb,isH){const r=[];for(let i=lb;i<arr.length-lb;i++){const s=arr.slice(i-lb,i+lb+1);if(isH?arr[i]===Math.max(...s):arr[i]===Math.min(...s))r.push(arr[i])}return r}
+
+function calcSignal(a){
+  const price=livePrices[a.id]||a.price||0;
+  if(!price||price<=0) return{entry:0,tp:0,sl:0,rr:'—'};
+  const isL=a.masterTrend==='ALCISTA',isB=a.masterTrend==='BAJISTA';
+  const r1H=a.tfResults?.['1H'],r5M=a.tfResults?.['5M'],r1D=a.tfResults?.['1DÍA'];
+  const id=(a.id||'').toLowerCase();
+
+  // ── ATR REAL desde velas 5M (últimas 14 velas) ──────────────
+  // Si tenemos velas 5M usamos ATR real, si no usamos % por activo
+  let atrVal=0;
+  const velas5M=candleData[a.id]?.[300]||[];
+  if(velas5M.length>=14){
+    let atrSum=0;
+    for(let i=velas5M.length-14;i<velas5M.length;i++){
+      atrSum+=(velas5M[i].high-velas5M[i].low);
+    }
+    atrVal=atrSum/14;
+  }
+
+  // ── Multiplicadores BASE por tipo de activo ──────────────────
+  let slMult=1.5, tpMultBase=3.0;
+
+  if(id.includes('boom')||id.includes('crash')){
+    slMult=1.2; tpMultBase=2.5;
+  } else if(id.startsWith('1hz')){
+    slMult=1.5; tpMultBase=3.0;
+  } else if(id.startsWith('r_')){
+    slMult=1.5; tpMultBase=3.0;
+  } else if(id.includes('stp')){
+    slMult=2.0; tpMultBase=4.0;
+  } else if(id.startsWith('jd')){
+    slMult=1.8; tpMultBase=3.5;
+  } else if(id.includes('rdb')){
+    slMult=1.5; tpMultBase=3.0;
+  }
+
+  // ── TP INTELIGENTE — escala con la fuerza del mercado ────────
+  // Mide: score, timeframes alineados, BOS, ChoCH, OB, RSI
+  const score     = a.score||0;
+  const tfResults = a.tfResults||{};
+  const tfVals    = Object.values(tfResults).filter(Boolean);
+  const tfAligned = tfVals.filter(t=>t.trend===a.masterTrend).length;
+  const bosCount  = tfVals.filter(t=>t.bos).length;
+  const chochCount= tfVals.filter(t=>t.choch).length;
+  const obCount   = tfVals.filter(t=>t.obHigh||t.obLow).length;
+  const rsiOK     = tfVals.filter(t=>t.rsiConfirm).length;
+  const momOK     = tfVals.filter(t=>t.momentumConfirm).length;
+
+  // Puntos de fuerza (0-10)
+  let fuerzaPts = 0;
+  fuerzaPts += tfAligned>=3 ? 3 : tfAligned>=2 ? 2 : tfAligned>=1 ? 1 : 0; // TF alineados
+  fuerzaPts += bosCount>=2  ? 2 : bosCount>=1  ? 1 : 0;                      // BOS
+  fuerzaPts += chochCount>=1 ? 1 : 0;                                          // ChoCH
+  fuerzaPts += obCount>=2   ? 1 : 0;                                           // OB múltiples
+  fuerzaPts += rsiOK>=2     ? 1 : 0;                                           // RSI confirma
+  fuerzaPts += momOK>=2     ? 1 : 0;                                           // Momentum
+  fuerzaPts += score>=92    ? 1 : 0;                                           // Score élite
+
+  // Multiplicador TP dinámico según fuerza (0-10 pts)
+  // Fuerza máxima (8-10) → TP = base × 2.2  (mercado con impulso fuerte)
+  // Fuerza alta   (6-7)  → TP = base × 1.7
+  // Fuerza media  (4-5)  → TP = base × 1.3
+  // Fuerza baja   (0-3)  → TP = base × 1.0  (conservador)
+  let tpFactor;
+  if(fuerzaPts>=8)      tpFactor=2.2;   // 🔥 Fuerza máxima — TP amplio
+  else if(fuerzaPts>=6) tpFactor=1.7;   // ⚡ Fuerza alta
+  else if(fuerzaPts>=4) tpFactor=1.3;   // 📈 Fuerza media
+  else                  tpFactor=1.0;   // 📊 Fuerza baja — conservador
+
+  const tpMult = tpMultBase * tpFactor;
+
+  // Etiqueta de fuerza para el mensaje
+  a._fuerzaNivel = fuerzaPts>=8?'🔥 MÁXIMA':fuerzaPts>=6?'⚡ ALTA':fuerzaPts>=4?'📈 MEDIA':'📊 BAJA';
+  a._fuerzaPts   = fuerzaPts;
+
+  // ── SL mínimo absoluto por activo (nunca menos de esto) ────────
+  // Calibrado contra precios reales de Deriv API
+  let slMinAbs;
+  if(id.includes('boom')||id.includes('crash')){
+    // Crash/Boom ~5000-30000: mínimo 0.30% (~15-90 pts según activo)
+    slMinAbs = price * 0.003;
+  } else if(id.includes('stp')){
+    // Step Index ~7-12 (3 decimales en Deriv): mínimo 0.26% (~0.020 pts)
+    slMinAbs = price * 0.0026;
+  } else if(id.startsWith('r_')||id.startsWith('1hz')){
+    // Volatility ~100-50000: mínimo 0.15%
+    slMinAbs = price * 0.0015;
+  } else if(id.startsWith('jd')){
+    // Jump Index: mínimo 0.20%
+    slMinAbs = price * 0.002;
+  } else if(id.includes('rdb')){
+    // Range Break: mínimo 0.15%
+    slMinAbs = price * 0.0015;
+  } else {
+    slMinAbs = price * 0.0015;
+  }
+
+  // ── Calcular distancias SL/TP ─────────────────────────────────
+  let slDist, tpDist;
+  // TP mínimo según fuerza: fuerza alta = más espacio mínimo garantizado
+  // Fuerza máxima(8+): mínimo R:R 3.0 | Alta(6-7): 2.5 | Media(4-5): 2.0 | Baja: 1.5
+  const rrMinGarantizado = fuerzaPts>=8 ? 3.0 : fuerzaPts>=6 ? 2.5 : fuerzaPts>=4 ? 2.0 : 1.5;
+
+  if(atrVal>0){
+    slDist = Math.max(atrVal*slMult, slMinAbs);
+    // TP = máximo entre ATR×tpMult y slDist×rrMin
+    // Así la fuerza siempre amplía el TP aunque el ATR sea pequeño
+    tpDist = Math.max(atrVal*tpMult, slDist*rrMinGarantizado);
+  } else {
+    // % de respaldo por activo
+    let slPct=0.008, tpPct=0.018;
+    if(id.includes('boom')||id.includes('crash')){slPct=0.015;tpPct=0.028}
+    else if(id.includes('stp')){slPct=0.004;tpPct=0.010}
+    else if(id.startsWith('jd')){slPct=0.007;tpPct=0.016}
+    slDist = Math.max(price*slPct, slMinAbs);
+    tpDist = Math.max(price*tpPct, slDist*rrMinGarantizado);
+  }
+
+  // ── Calcular entry, SL, TP ────────────────────────────────────
+  let entry=price, tp, sl;
+
+  if(isL){
+    // BUY: entry puede bajar hacia OB (entry <= price)
+    if(r1H?.obHigh&&r1H.obHigh>0&&r1H.obHigh<price)
+      entry=Math.min(price, r1H.obHigh*1.001);
+    // SL: SIEMPRE debajo de entry
+    const obSL=r1H?.obLow;
+    const slBase=entry-slDist;
+    sl=(obSL&&obSL>0&&obSL<entry&&(entry-obSL)<=slDist*1.5)?obSL:slBase;
+    // TP: SIEMPRE arriba de entry
+    const obTP=r1D?.recentHigh||r1H?.recentHigh;
+    const tpBase=entry+tpDist;
+    tp=(obTP&&obTP>entry&&(obTP-entry)<=tpDist*2)?obTP:tpBase;
+    // Validar: sl < entry < tp
+    if(sl>=entry) sl=entry-slDist;
+    if(tp<=entry) tp=entry+tpDist;
+
+  } else if(isB){
+    // SELL: entry puede subir hacia OB (entry >= price)
+    if(r1H?.obLow&&r1H.obLow>0&&r1H.obLow>price)
+      entry=Math.max(price, r1H.obLow*0.999);
+    // SL: SIEMPRE arriba de entry
+    const obSL=r1H?.obHigh;
+    const slBase=entry+slDist;
+    sl=(obSL&&obSL>entry&&(obSL-entry)<=slDist*1.5)?obSL:slBase;
+    // TP: SIEMPRE debajo de entry
+    const obTP=r1D?.recentLow||r1H?.recentLow;
+    const tpBase=entry-tpDist;
+    tp=(obTP&&obTP>0&&obTP<entry&&(entry-obTP)<=tpDist*2)?obTP:tpBase;
+    // Validar: tp < entry < sl
+    if(sl<=entry) sl=entry+slDist;
+    if(tp>=entry) tp=entry-tpDist;
+
+  } else {
+    sl=price-slDist; tp=price+tpDist;
+  }
+
+  if(!sl||!tp||isNaN(sl)||isNaN(tp))
+    return{entry:price,tp:isL?price+tpDist:price-tpDist,sl:isL?price-slDist:price+slDist,rr:'—'};
+
+  const risk=Math.abs(entry-sl), reward=Math.abs(tp-entry);
+  // Si el RR es menor a 1.0, ampliar el TP automáticamente
+  let rrNum = risk>0?reward/risk:0;
+  if(rrNum < 1.0 && risk>0){
+    // TP mínimo = RR 1.5 sobre el SL
+    const tpMinDist = risk * 1.5;
+    tp = isL ? entry+tpMinDist : entry-tpMinDist;
+  }
+  const rrFinal = risk>0?(Math.abs(tp-entry)/risk).toFixed(2):'—';
+  return{entry,tp,sl,rr:rrFinal};
+}
+
+
+// ── APEX Worker — delegar análisis al servidor ───────────────
+// El Worker ejecuta el mismo motor ICT/SMC pero fuera del navegador
+// Así el código de análisis no es visible en el cliente
+async function processAnalysisWorker(){
+  // Si no hay Worker configurado, caer al análisis local como fallback
+  if(!WORKER_URL||WORKER_URL.includes('TU-SUBDOMINIO')){
+    console.warn('APEX: WORKER_URL no configurada — usando análisis local');
+    processAnalysis();
+    return;
+  }
+  const el=document.getElementById('scanMsg');
+  if(el)el.innerHTML='Enviando velas al servidor APEX...<br><em>Analizando ICT/SMC en la nube</em>';
+  try{
+    const resp=await fetch(WORKER_URL+'/scan',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({candleData,livePrices})
+    });
+    if(!resp.ok) throw new Error('Worker HTTP '+resp.status);
+    const data=await resp.json();
+    if(!data.ok||!data.results) throw new Error('Respuesta inesperada del Worker');
+    // Usar resultados del Worker directamente
+    scanInProgress=false;
+    analysisResults=data.results;
+    // Restaurar señales que necesitan livePrices actuales
+    analysisResults.forEach(a=>{
+      if(livePrices[a.id]&&livePrices[a.id]>0) a.price=livePrices[a.id];
+    });
+    analysisResults.sort((a,b)=>b.score-a.score);
+    document.getElementById('scanBtn').disabled=false;
+    document.getElementById('scanTime').textContent='SCAN: '+new Date().toLocaleTimeString('es-ES');
+    const opC=analysisResults.filter(a=>a.operable==='YES').length;
+    document.getElementById('opCount').textContent=opC+' OPERABLES';
+    renderScanner();
+    // Re-suscribir ticks
+    SYNTHETICS.forEach((asset,i)=>setTimeout(()=>{try{ws.send(JSON.stringify({ticks:asset.id,subscribe:1}))}catch(e){}},i*80));
+    const RETRY=['1HZ150V','1HZ250V','stpRNG','stpRNG2','stpRNG3','stpRNG4','stpRNG5','CRASH600','CRASH900','BOOM600','BOOM900'];
+    setTimeout(()=>{RETRY.forEach(id=>{if(!livePrices[id]||livePrices[id]<=0){try{ws.send(JSON.stringify({ticks:id,subscribe:1}))}catch(e){}}});},5000);
+    if(analysisResults.length>0){renderRec(analysisResults[0]);renderDetail(analysisResults[0]);}
+    addChat('apex','<strong>Análisis completado en servidor</strong> — '+opC+' activos operables detectados.');
+    checkAlerts();
+    setInterval(bridgeMonitor,60000);
+  }catch(err){
+    console.error('APEX Worker error:',err.message);
+    addChat('apex','⚠ Worker no disponible — usando análisis local como respaldo');
+    processAnalysis(); // fallback al análisis local
+  }
+}
+
+function processAnalysis(){
+  scanInProgress=false;analysisResults=[];
+  // v4.1 — 6 timeframes con pesos institucionales
+  // MES/SEM = contexto macro (solo tendencia, no bloquean)
+  // 1D/1H   = estructura principal
+  // M15/5M  = confirmación de entrada (sincronizado con el bot)
+  const TFs=[2592000,604800,86400,3600,900,300];
+  const TFL={2592000:'MES',604800:'SEM',86400:'1DÍA',3600:'1H',900:'M15',300:'5M'};
+  SYNTHETICS.forEach(asset=>{
+    const tfR={};
+    TFs.forEach(tf=>{tfR[TFL[tf]]=analyzeCandles(candleData[asset.id]?.[tf])});
+    const valid=Object.values(tfR).filter(Boolean);if(valid.length===0)return;
+    const l1D=tfR['1DÍA'];
+    const price=livePrices[asset.id]||0;
+    let score=0;const reasons=[];
+
+    // ── TENDENCIA MACRO — Mensual y Semanal (solo información, no puntúan fuerte)
+    const trenMes=tfR['MES']?.trend||null;
+    const trenSem=tfR['SEM']?.trend||null;
+    const trenDia=tfR['1DÍA']?.trend||null;
+    const trenH1 =tfR['1H']?.trend||null;
+    const trenM15=tfR['M15']?.trend||null;
+    const tren5M =tfR['5M']?.trend||null;
+
+    // Tendencia principal — basada en los 4 TF operativos (1D, 1H, M15, 5M)
+    const opTFs=[trenDia,trenH1,trenM15,tren5M].filter(Boolean);
+    const bull=opTFs.filter(t=>t==='ALCISTA').length;
+    const bear=opTFs.filter(t=>t==='BAJISTA').length;
+    let masterTrend=bull>bear?'ALCISTA':bear>bull?'BAJISTA':'RANGO';
+
+    // ── REGLA BOOM/CRASH
+    const isBoom  = asset.id.includes('BOOM');
+    const isCrash = asset.id.includes('CRASH');
+    if(isBoom && masterTrend==='BAJISTA'){
+      const sc=Math.max(bull,bear)*10;
+      analysisResults.push({...asset,tfResults:tfR,masterTrend:'ALCISTA',score:sc,
+        reasons:['⛔ Señal bajista bloqueada — BOOM solo permite BUY','Esperar estructura alcista para operar'],
+        operable:'NO',price,resH:l1D?.recentHigh||price*1.01,supL:l1D?.recentLow||price*0.99,
+        obH:l1D?.obHigh||price*1.005,obL:l1D?.obLow||price*0.995,fvgLvl:price*0.9995,
+        trenMes,trenSem});return;
+    }
+    if(isCrash && masterTrend==='ALCISTA'){
+      const sc=Math.max(bull,bear)*10;
+      analysisResults.push({...asset,tfResults:tfR,masterTrend:'BAJISTA',score:sc,
+        reasons:['⛔ Señal alcista bloqueada — CRASH solo permite SELL','Esperar estructura bajista para operar'],
+        operable:'NO',price,resH:l1D?.recentHigh||price*1.01,supL:l1D?.recentLow||price*0.99,
+        obH:l1D?.obHigh||price*1.005,obL:l1D?.obLow||price*0.995,fvgLvl:price*0.9995,
+        trenMes,trenSem});return;
+    }
+    if(isBoom)  masterTrend='ALCISTA';
+    if(isCrash) masterTrend='BAJISTA';
+
+    // ── PUNTUACIÓN — pesos por importancia del TF
+    const aligned=Math.max(bull,bear);
+    score+=aligned*10;
+    if(aligned>=3)reasons.push(`${aligned}/4 timeframes operativos alineados en ${masterTrend}`);
+
+    // ── MACRO como GUÍA — Mensual y Semanal orientan, no bloquean ──
+    // Si ambos confirman → señal muy fuerte (+20)
+    // Si uno confirma    → señal sólida (+10)
+    // Si ninguno confirma → señal válida pero con menos convicción (+0)
+    // Si ambos contrarios → señal débil (-5) pero no bloqueada
+    let macroAlinea=0;
+    let macroDesc='';
+    if(trenMes===masterTrend) macroAlinea++;
+    if(trenSem===masterTrend) macroAlinea++;
+
+    if(macroAlinea===2){
+      score+=20;
+      macroDesc='✅ MACRO PLENO — Mensual + Semanal confirman '+masterTrend;
+      reasons.push(macroDesc);
+    } else if(macroAlinea===1){
+      score+=10;
+      macroDesc='📅 '+(trenMes===masterTrend?'Mensual':'Semanal')+' confirma '+masterTrend;
+      reasons.push(macroDesc);
+    } else if(trenMes&&trenSem&&macroAlinea===0){
+      // Macro contrario — penalización leve, no bloqueo
+      score-=5;
+      macroDesc='⚠️ Macro neutral — operar con cautela';
+      reasons.push(macroDesc);
+    }
+
+    // M15 alineado con bot (bonus especial — sincronía con APEX Bot)
+    const m15Alinea=(trenM15===masterTrend);
+    if(m15Alinea){
+      score+=8;
+      reasons.push('🤖 M15 alineado — sincronizado con APEX Bot');
+    }
+
+    // Detección de chop en M15 (mismo filtro que bot v4.1)
+    const m15Result=tfR['M15'];
+    let chopM15=false;
+    if(m15Result&&m15Result.trend==='RANGO'){
+      score-=8;
+      chopM15=true;
+      reasons.push('⚠️ M15 en RANGO — posible chop — bot v4.1 podría no entrar');
+    }
+
+    const validOp=Object.values(tfR).filter(Boolean);
+    const bos=validOp.filter(t=>t.bos).length;
+    const choch=validOp.filter(t=>t.choch).length;
+    score+=bos*8+choch*5;
+    if(bos>0)reasons.push(`${bos} rompimientos BOS confirmados`);
+    if(choch>0)reasons.push(`ChoCH detectado — posible cambio de tendencia`);
+
+    const ob=validOp.filter(t=>t.obHigh).length;
+    score+=ob*5;
+    if(ob>=1)reasons.push(`${ob} Order Blocks activos en estructura`);
+
+    const fvg=validOp.filter(t=>t.fvg).length;
+    score+=fvg*4;
+    if(fvg>=1)reasons.push(`${fvg} Fair Value Gaps identificados`);
+
+    const bslC=validOp.filter(t=>t.bsl).length,sslC=validOp.filter(t=>t.ssl).length;
+    if(bslC>0||sslC>0){score+=10;reasons.push(`Liquidez ${bslC>sslC?'BSL':'SSL'} visible — objetivo institucional`)}
+
+    const rsiConfirmed=validOp.filter(t=>t.rsiConfirm).length;
+    score+=rsiConfirmed*5;
+    if(rsiConfirmed>=2)reasons.push(`RSI confirma dirección ${masterTrend} en ${rsiConfirmed} timeframes`);
+
+    const rsiOB=validOp.filter(t=>t.rsiOB).length;
+    const rsiOS=validOp.filter(t=>t.rsiOS).length;
+    if(masterTrend==='ALCISTA'&&rsiOB>=2){score-=10;reasons.push('⚠ RSI sobrecomprado — esperar retroceso')}
+    if(masterTrend==='BAJISTA'&&rsiOS>=2){score-=10;reasons.push('⚠ RSI sobrevendido — esperar rebote')}
+
+    const momOk=validOp.filter(t=>t.momentumConfirm).length;
+    score+=momOk*4;
+    if(momOk>=2)reasons.push(`Momentum confirma dirección en ${momOk} timeframes`);
+
+    if(isBoom&&masterTrend==='ALCISTA'){score+=15;reasons.push('✅ Boom Index — BUY alineado con spike alcista')}
+    if(isCrash&&masterTrend==='BAJISTA'){score+=15;reasons.push('✅ Crash Index — SELL alineado con spike bajista')}
+    if(masterTrend==='RANGO')score=Math.min(score,45);
+    score=Math.min(97,Math.max(0,score));
+
+    // ── INDICADOR BOT ALINEADO
+    const botAlineado=(m15Alinea&&aligned>=3&&!chopM15&&macroAlinea>=1);
+
+    analysisResults.push({
+      ...asset,tfResults:tfR,masterTrend,score,
+      reasons:reasons.length>0?reasons:['Sin suficiente confluencia institucional'],
+      operable:score>=68?'YES':score>=48?'WATCH':'NO',
+      price,trenMes,trenSem,botAlineado,chopM15,macroAlinea,
+      resH:l1D?.recentHigh||price*1.01,supL:l1D?.recentLow||price*0.99,
+      obH:l1D?.obHigh||price*1.005,obL:l1D?.obLow||price*0.995,fvgLvl:price*0.9995
+    });
+  });
+  analysisResults.sort((a,b)=>b.score-a.score);
+  document.getElementById('scanBtn').disabled=false;
+  document.getElementById('scanTime').textContent=`SCAN: ${new Date().toLocaleTimeString('es-ES')}`;
+  const opC=analysisResults.filter(a=>a.operable==='YES').length;
+  document.getElementById('opCount').textContent=`${opC} OPERABLES`;
+  renderScanner();
+  SYNTHETICS.forEach((asset,i)=>setTimeout(()=>{try{ws.send(JSON.stringify({ticks:asset.id,subscribe:1}))}catch(e){}},i*80));
+  const RETRY_ASSETS=['1HZ150V','1HZ250V','stpRNG','stpRNG2','stpRNG3','stpRNG4','stpRNG5','CRASH600','CRASH900','BOOM600','BOOM900'];
+  setTimeout(()=>{RETRY_ASSETS.forEach(id=>{if(!livePrices[id]||livePrices[id]<=0){try{ws.send(JSON.stringify({ticks:id,subscribe:1}))}catch(e){}}});},5000);
+  setTimeout(()=>{RETRY_ASSETS.forEach(id=>{if(!livePrices[id]||livePrices[id]<=0){try{ws.send(JSON.stringify({ticks:id,subscribe:1}))}catch(e){}}});},15000);
+  if(analysisResults.length>0){
+    renderRec(analysisResults[0]);renderDetail(analysisResults[0]);
+    const bot=analysisResults.filter(a=>a.botAlineado).length;
+    addChat('apex',`✅ Análisis 6 TF completo. <strong>${opC}</strong> activos operables.<br>🤖 <strong>${bot}</strong> activos con BOT ALINEADO.<br>Mejor: <strong>${analysisResults[0].sym}</strong> (${analysisResults[0].score}%) — ${analysisResults[0].masterTrend}.`);
+  }
+  setTimeout(checkAlerts,1000);
+  setTimeout(bridgeMonitor,2000);
+  setTimeout(()=>{
+    SYNTHETICS.forEach(asset=>{
+      if(!livePrices[asset.id]||livePrices[asset.id]<=0){
+        try{ws.send(JSON.stringify({ticks:asset.id,subscribe:1}))}catch(e){}
+      }
+    });
+    if(analysisResults[selectedIdx]) renderRec(analysisResults[selectedIdx]);
+  },8000);
+}
+
+
+function renderScanner(){
+  if(!analysisResults.length){document.getElementById('scannerRows').innerHTML=`<div class="scan-loading"><div class="scan-msg">Sin datos.<br><em>Intenta rescanear</em></div></div>`;return}
+
+  // ── Actualizar TOP SIGNAL CARD ───────────────────────────────
+  const topCard = document.getElementById('topSignalCard');
+  const top = analysisResults[0];
+  if(top){
+    topCard.style.display='grid';
+    const sig = calcSignal(top);
+    const isDn = top.masterTrend==='BAJISTA';
+    const priceColor = isDn?'#ff4466':'#00ff78';
+    document.getElementById('tscSym').textContent = top.sym;
+    document.getElementById('tscCat').textContent = top.cat.toUpperCase();
+    document.getElementById('tscPrice').style.color = priceColor;
+    document.getElementById('tscPrice').textContent = fmtP(top.id, livePrices[top.id]||top.price);
+    const dirText = top.masterTrend==='ALCISTA'?'↑ LONG · COMPRA':top.masterTrend==='BAJISTA'?'↓ SHORT · VENTA':'→ ESPERAR';
+    document.getElementById('tscDir').textContent = dirText;
+    document.getElementById('tscDir').style.background = isDn?'rgba(255,68,102,.1)':'rgba(0,255,120,.1)';
+    document.getElementById('tscDir').style.color = isDn?'#ff4466':'#00ff78';
+    document.getElementById('tscDir').style.border = isDn?'1px solid rgba(255,68,102,.3)':'1px solid rgba(0,255,120,.3)';
+    document.getElementById('tscConfFill').style.width = top.score+'%';
+    document.getElementById('tscConfPct').textContent = top.score+'%';
+    const aln = top.reasons?top.reasons.length+'/3 TIMEFRAMES ALINEADOS':'—';
+    document.getElementById('tscConfSub').textContent = aln;
+    document.getElementById('tscP').textContent = fmtP(top.id,livePrices[top.id]||top.price);
+    document.getElementById('tscP').style.color = priceColor;
+    document.getElementById('tscTP').textContent = fmtP(top.id,sig.tp);
+    document.getElementById('tscSL').textContent = fmtP(top.id,sig.sl);
+    document.getElementById('tscRR').textContent = '1:'+sig.rr;
+  }
+
+  // ── Renderizar cards (sin el top, empieza desde índice 0 todos) ─
+  document.getElementById('scannerRows').innerHTML=analysisResults.map((a,i)=>{
+    const rc=a.masterTrend==='ALCISTA'?'bull':a.masterTrend==='BAJISTA'?'bear':'rang';
+    const tc=a.masterTrend==='ALCISTA'?'tp-bull':a.masterTrend==='BAJISTA'?'tp-bear':'tp-rang';
+    const ar=a.masterTrend==='ALCISTA'?'↑ BUY':a.masterTrend==='BAJISTA'?'↓ SELL':'→ WAIT';
+    const sc=a.score>=68?'#00ff78':a.score>=48?'#fbbf24':'#ff4466';
+    const oc=a.operable==='YES'?'op-yes':a.operable==='WATCH'?'op-watch':'op-no';
+    const ot=a.operable==='YES'?'OPERABLE':a.operable==='WATCH'?'VIGILAR':'NO HOY';
+    const pc=a.masterTrend==='ALCISTA'?'#00ff78':a.masterTrend==='BAJISTA'?'#ff4466':'#fbbf24';
+    // v4.1 — Indicadores nuevos
+    const botBadge=a.botAlineado?'<span style="font-size:7px;background:rgba(155,89,255,.15);color:#9b59ff;border:1px solid rgba(155,89,255,.3);padding:1px 5px;border-radius:3px;letter-spacing:.5px">🤖 BOT</span>':'';
+    const chopBadge=a.chopM15?'<span style="font-size:7px;background:rgba(255,195,0,.1);color:#ffc300;border:1px solid rgba(255,195,0,.3);padding:1px 5px;border-radius:3px">⚠ CHOP</span>':'';
+    const macroIco=a.trenMes?`<span style="font-size:7px;color:${a.trenMes===a.masterTrend?'#00ff78':a.trenMes?'#ff4466':'#364f6b'}" title="Mensual: ${a.trenMes||'—'}">M:${a.trenMes==='ALCISTA'?'↑':a.trenMes==='BAJISTA'?'↓':'→'}</span>`:'';
+    const semIco=a.trenSem?`<span style="font-size:7px;color:${a.trenSem===a.masterTrend?'#00ff78':a.trenSem?'#ff4466':'#364f6b'}" title="Semanal: ${a.trenSem||'—'}">S:${a.trenSem==='ALCISTA'?'↑':a.trenSem==='BAJISTA'?'↓':'→'}</span>`:'';
+    return`<div class="asset-row ${rc} ${i===selectedIdx?'active':''}" onclick="selectRow(${i})" ondblclick="openModal(${i})">
+      <div class="a-row-top">
+        <div><div class="a-name">${a.sym}</div><div class="a-cat">${a.cat}</div></div>
+        <span class="trend-pill ${tc}">${ar}</span>
+      </div>
+      <div class="a-price" id="price-${a.id}" style="color:${pc}">${fmtP(a.id,a.price)}</div>
+      <div class="score-col"><div class="s-bar"><div class="s-fill" style="width:${a.score}%;background:${sc}"></div></div><div class="s-num" style="color:${sc}">${a.score}%</div></div>
+      <div class="a-row-foot">
+        <span class="op-tag ${oc}">${ot}</span>
+        <div style="display:flex;gap:3px;align-items:center">${macroIco}${semIco}${botBadge}${chopBadge}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectRow(i){
+  selectedIdx=i;
+  document.querySelectorAll('.asset-row').forEach((r,j)=>r.classList.toggle('active',j===i));
+  renderRec(analysisResults[i]);
+  renderDetail(analysisResults[i]);
+  // Si precio aún no disponible, suscribir ahora mismo
+  const a=analysisResults[i];
+  if(a&&!livePrices[a.id]){
+    try{ws.send(JSON.stringify({ticks:a.id,subscribe:1}))}catch(e){}
+  }
+}
+
+function openModal(idx){
+  const a=analysisResults[idx];if(!a)return;
+  modalAsset=a;const sig=calcSignal(a);
+  // Recuperar balance guardado y recalcular lote
+  const savedBal=localStorage.getItem('apexBalance');
+  const savedRsk=localStorage.getItem('apexRiesgo');
+  if(savedBal){document.getElementById('capitalBalance').value=savedBal;}
+  if(savedRsk){document.getElementById('capitalRiesgo').value=savedRsk;}
+  setTimeout(calcularLote,50);
+
+  // ── Alerta TF en RANGO ──────────────────────────────────────
+  const tfAlert = document.getElementById('mTFAlerta');
+  const tfValsM = Object.values(a.tfResults||{}).filter(Boolean);
+  const rangoTFs = ['5m','1H'].filter(tf=>{
+    const r=a.tfResults?.[tf]||a.tfResults?.['5M']||a.tfResults?.['1H'];
+    return r && r.trend==='RANGO';
+  });
+  const tfRangoCount = tfValsM.filter(t=>t.trend==='RANGO').length;
+  const tfAlignCount = tfValsM.filter(t=>t.trend===a.masterTrend).length;
+
+  if(tfRangoCount>=2){
+    tfAlert.style.display='block';
+    tfAlert.style.borderColor='var(--red)';
+    tfAlert.style.background='rgba(255,45,85,0.06)';
+    tfAlert.style.color='var(--red)';
+    tfAlert.innerHTML='⚠️ <strong>PRECAUCIÓN:</strong> '+tfRangoCount+'/3 timeframes en RANGO — mercado sin dirección clara. Esperar confirmación antes de entrar.';
+  } else if(tfRangoCount===1 && tfAlignCount<2){
+    tfAlert.style.display='block';
+    tfAlert.style.borderColor='var(--yellow)';
+    tfAlert.style.background='rgba(255,214,0,0.04)';
+    tfAlert.style.color='var(--yellow)';
+    tfAlert.innerHTML='⚡ <strong>ATENCIÓN:</strong> 1 timeframe en RANGO. Entrada válida pero con cautela — reduce el lote.';
+  } else if(tfAlignCount===3){
+    tfAlert.style.display='block';
+    tfAlert.style.borderColor='var(--green)';
+    tfAlert.style.background='rgba(0,232,122,0.04)';
+    tfAlert.style.color='var(--green)';
+    tfAlert.innerHTML='✅ <strong>CONFLUENCIA MÁXIMA:</strong> 3/3 timeframes alineados — entrada de alta probabilidad.';
+  } else {
+    tfAlert.style.display='none';
+  }
+  const precioModal = livePrices[a.id] || a.price;
+  const dir=a.masterTrend==='ALCISTA'?'▲ LONG / COMPRA':a.masterTrend==='BAJISTA'?'▼ SHORT / VENTA':'↔ ESPERAR ROMPIMIENTO';
+  const dc=a.masterTrend==='ALCISTA'?'var(--green)':a.masterTrend==='BAJISTA'?'var(--red)':'var(--yellow)';
+  const tc=a.masterTrend==='ALCISTA'?'tp-bull':a.masterTrend==='BAJISTA'?'tp-bear':'tp-rang';
+  const oc=a.operable==='YES'?'op-yes':a.operable==='WATCH'?'op-watch':'op-no';
+  const ot=a.operable==='YES'?'OPERABLE':a.operable==='WATCH'?'VIGILAR':'NO HOY';
+  document.getElementById('mSym').textContent=a.sym;
+  document.getElementById('mName').textContent=a.name+' · '+a.cat;
+  document.getElementById('mPrice').textContent=precioModal?fmtP(a.id,precioModal):'Conectando...';
+  document.getElementById('mPrice').style.color=dc;
+  document.getElementById('mTrend').textContent=(a.masterTrend==='ALCISTA'?'↑':a.masterTrend==='BAJISTA'?'↓':'→')+' '+a.masterTrend;
+  document.getElementById('mTrend').className='trend-pill '+tc;
+  document.getElementById('mOp').textContent=ot;document.getElementById('mOp').className='op-tag '+oc;
+  document.getElementById('mScore').textContent=a.score+'% CONFLUENCIA';
+  document.getElementById('mDir').textContent=dir;document.getElementById('mDir').style.color=dc;
+  document.getElementById('mConf').textContent=a.score+'% Confluencia Institucional';
+  document.getElementById('mEntry').textContent=fmtP(a.id,sig.entry);
+  document.getElementById('mTP').textContent=fmtP(a.id,sig.tp);
+  document.getElementById('mSL').textContent=fmtP(a.id,sig.sl);
+  document.getElementById('mRR').textContent='1 : '+sig.rr;
+  const r1Hd=a.tfResults['1H'];
+  const rsiVal=r1Hd?.rsi?r1Hd.rsi.toFixed(1):'—';
+  const rsiEl=document.getElementById('mRSI');
+  rsiEl.textContent=rsiVal+(rsiVal!=='—'?r1Hd?.rsiOB?' ⚠OB':r1Hd?.rsiOS?' ⚠OS':r1Hd?.rsiConfirm?' ✓':'':'');
+  rsiEl.style.color=r1Hd?.rsiOB?'var(--red)':r1Hd?.rsiOS?'var(--green)':'var(--purple)';
+  document.getElementById('mStruct').textContent=r1Hd?.struct||'—';
+  document.getElementById('mTFGrid').innerHTML=['MES','SEM','1DÍA','1H','M15','5M'].map(tf=>{
+    const r=a.tfResults[tf];
+    const esBotTF=(tf==='M15'||tf==='1H');
+    const esMacro=(tf==='MES'||tf==='SEM');
+    const labelExtra=tf==='M15'?' 🤖':esMacro?' 📅':'';
+    const macroClass=esMacro?' macro':'';
+    if(!r)return`<div class="modal-tf-cell${macroClass}"><div class="tf-label">${tf}${labelExtra}</div><div class="tf-t" style="color:var(--dim)">—</div><div class="tf-s">sin datos</div></div>`;
+    const tc2=r.trend==='ALCISTA'?'bull-c':r.trend==='BAJISTA'?'bear-c':'rang-c';
+    const al=r.trend===a.masterTrend?'aligned':r.trend!=='RANGO'?'counter':'';
+    const bdr=esBotTF?'border-color:rgba(155,89,255,.3);':'';
+    const obStr=esMacro&&r.obHigh?`<br><span style="color:#ffc300;font-size:7px">OB ${r.obHigh.toFixed?r.obHigh.toFixed(2):r.obHigh}</span>`:'';
+    const fvgStr=esMacro&&r.fvg?`<span style="color:#ffc300;font-size:7px"> FVG</span>`:'';
+    const sslStr=esMacro?(r.ssl?`<span style="color:#ffc300;font-size:7px"> SSL</span>`:r.bsl?`<span style="color:#ffc300;font-size:7px"> BSL</span>`:''):'';
+    return`<div class="modal-tf-cell ${al}${macroClass}" style="${bdr}"><div class="tf-label">${tf}${labelExtra}</div><div class="tf-t ${tc2}">${r.trend==='ALCISTA'?'↑':r.trend==='BAJISTA'?'↓':'→'} ${r.trend}</div><div class="tf-s">${r.struct}${r.bos?' · BOS':''}${r.choch?' · ChoCH':''}${obStr}${fvgStr}${sslStr}</div></div>`;
+  }).join('');
+  document.getElementById('mReasons').innerHTML=a.reasons.map(r=>`<div class="reason-item"><span class="reason-icon">✓</span><span>${r}</span></div>`).join('');
+  document.getElementById('mLevels').innerHTML=`
+    <div class="sig-item"><div class="sig-lbl">RESISTENCIA/BSL</div><div class="sig-val" style="color:var(--red)">${fmtP(a.id,a.resH)}</div></div>
+    <div class="sig-item"><div class="sig-lbl">OB ALTO</div><div class="sig-val" style="color:var(--orange)">${fmtP(a.id,a.obH)}</div></div>
+    <div class="sig-item"><div class="sig-lbl">FVG</div><div class="sig-val" style="color:var(--yellow)">${fmtP(a.id,a.fvgLvl)}</div></div>
+    <div class="sig-item"><div class="sig-lbl">OB BAJO</div><div class="sig-val" style="color:var(--orange)">${fmtP(a.id,a.obL)}</div></div>
+    <div class="sig-item"><div class="sig-lbl">SOPORTE/SSL</div><div class="sig-val" style="color:var(--green)">${fmtP(a.id,a.supL)}</div></div>`;
+  const sb=document.getElementById('sendSignalBtn');sb.disabled=false;sb.textContent='📲 ENVIAR SEÑAL COMPLETA A TELEGRAM';sb.style.background='';
+  setTimeout(()=>drawCandleChart(a),80);
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function calcularLote(){
+  if(!modalAsset) return;
+  const balance = parseFloat(document.getElementById('capitalBalance').value)||0;
+  const riesgoPct = parseFloat(document.getElementById('capitalRiesgo').value)||2;
+  if(balance<=0){
+    document.getElementById('capitalResultados').style.display='none';
+    document.getElementById('capitalAlerta').style.display='none';
+    document.getElementById('riesgoBar').style.width='0%';
+    return;
+  }
+  const sig   = calcSignal(modalAsset);
+  const price = livePrices[modalAsset.id]||modalAsset.price||0;
+  if(!price||!sig.sl) return;
+
+  const riesgoUSD = balance * riesgoPct / 100;
+  const id = (modalAsset.id||'').toLowerCase();
+
+  // ── SL mínimo garantizado (mismo que calcSignal) ─────────────
+  let slMinAbs;
+  if(id.includes('boom')||id.includes('crash')) slMinAbs = price * 0.003;
+  else if(id.includes('stp'))                   slMinAbs = price * 0.0026;
+  else if(id.startsWith('r_')||id.startsWith('1hz')) slMinAbs = price * 0.0015;
+  else if(id.startsWith('jd'))                  slMinAbs = price * 0.002;
+  else                                          slMinAbs = price * 0.0015;
+
+  // Usar el SL calculado pero nunca menos del mínimo
+  const slDistRaw = Math.abs(price - sig.sl);
+  const tpDistRaw = Math.abs(price - sig.tp);
+  const slDist = Math.max(slDistRaw, slMinAbs);
+  const tpDist = tpDistRaw > 0 ? tpDistRaw : slDist * 1.5;
+
+  // ── Fórmula REAL MT5 Deriv (calibrada con imágenes reales) ────
+  // pip_value Step Index = $10/punto/lote (confirmado: 0.1×40pts=$40.10)
+  // pip_value Boom/Crash/Vol/Jump = $1/punto/lote (confirmado: 0.3×21pts=$6.31)
+  const pipVal = id.includes('stp') ? 10.0 : 1.0;
+
+  // lote = riesgoUSD / (slPts × pipVal)
+  let lote = riesgoUSD / (slDist * pipVal);
+  lote = Math.floor(lote * 100) / 100;
+  if(lote < 0.01) lote = 0.01;
+  if(lote > 100)  lote = 100;
+
+  const riesgoReal   = lote * slDist * pipVal;
+  const gananciaReal = lote * tpDist * pipVal;
+  const riesgoPctReal = riesgoReal / balance * 100;
+
+  // Mostrar resultados
+  document.getElementById('capitalResultados').style.display='grid';
+  document.getElementById('cLote').textContent        = lote.toFixed(2);
+  document.getElementById('cRiesgoUSD').textContent   = '$'+riesgoReal.toFixed(2);
+  document.getElementById('cGananciaUSD').textContent = '$'+gananciaReal.toFixed(2);
+
+  // Barra de riesgo visual
+  const bar = document.getElementById('riesgoBar');
+  bar.style.width      = (Math.min(riesgoPctReal,10)/10*100)+'%';
+  bar.style.background = riesgoPctReal<=2?'var(--green)':riesgoPctReal<=4?'var(--yellow)':'var(--red)';
+
+  // Alertas inteligentes con balance mínimo recomendado
+  const alerta = document.getElementById('capitalAlerta');
+  const riesgoMinLote = loteMin * slDistReal;  // riesgo con lote mínimo posible
+  const balMinRecomendado = Math.ceil(riesgoMinLote / (riesgoPct/100) / 10) * 10;
+
+  if(riesgoPctReal > 10){
+    // Activo demasiado grande para el balance — imposible operar con seguridad
+    alerta.style.display='block'; alerta.style.color='var(--red)';
+    alerta.innerHTML='🚫 <strong>Balance insuficiente</strong> para este activo con seguridad.<br>'
+      +'Balance mínimo recomendado: <strong>$'+balMinRecomendado+'</strong> (lote 0.01 = '
+      +riesgoPctReal.toFixed(1)+'% de riesgo).<br>'
+      +'💡 Considera operar <strong>Crash/Boom 300</strong> o <strong>Step Index</strong> con tu balance actual.';
+  } else if(riesgoPctReal > 5){
+    alerta.style.display='block'; alerta.style.color='var(--red)';
+    alerta.innerHTML='⚠️ Riesgo '+riesgoPctReal.toFixed(1)+'% — alto para tu balance. '
+      +'Balance ideal: <strong>$'+balMinRecomendado+'</strong>';
+  } else if(balance < 50 && lote > 0.01){
+    alerta.style.display='block'; alerta.style.color='var(--yellow)';
+    alerta.innerHTML='💡 Balance bajo — usa lote 0.01 para proteger la cuenta';
+  } else if(id.startsWith('1hz')){
+    alerta.style.display='block'; alerta.style.color='var(--yellow)';
+    alerta.innerHTML='⚡ V(1s) muy volátil — lote máx 0.01 recomendado';
+  } else {
+    alerta.style.display='none';
+  }
+
+  // Guardar para siguiente vez
+  localStorage.setItem('apexBalance', balance);
+  localStorage.setItem('apexRiesgo', riesgoPct);
+}
+
+function closeModal(){document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow='';modalAsset=null}
+function closeModalOutside(e){if(e.target===document.getElementById('modalOverlay'))closeModal()}
+
+function drawCandleChart(a){
+  const canvas=document.getElementById('modalChart');
+  const ctx=canvas.getContext('2d');
+  const W=canvas.offsetWidth,H=canvas.offsetHeight;
+  canvas.width=W;canvas.height=H;
+  ctx.fillStyle='#04060d';ctx.fillRect(0,0,W,H);
+  const candles=candleData[a.id]?.[3600];
+  if(!candles||candles.length<5){
+    ctx.fillStyle='#364f6b';ctx.font='11px Space Mono';ctx.textAlign='center';
+    ctx.fillText('Sin datos de velas 1H disponibles',W/2,H/2);return;
+  }
+  const rc=candles.slice(-40);
+  const maxH=Math.max(...rc.map(c=>c.high)),minL=Math.min(...rc.map(c=>c.low)),range=maxH-minL||1;
+  const pad=20,cH=H-pad*2,cW=W-pad*2;
+  const cw=Math.max(3,Math.floor(cW/rc.length)-1);
+  const sy=v=>pad+cH-((v-minL)/range*cH);
+  ctx.strokeStyle='rgba(14,28,53,0.6)';ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y=pad+(cH/4)*i;ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(W-pad,y);ctx.stroke();
+    ctx.fillStyle='#364f6b';ctx.font='8px Space Mono';ctx.textAlign='left';
+    ctx.fillText((maxH-((maxH-minL)/4)*i).toFixed(2),2,y+3);
+  }
+  rc.forEach((c,i)=>{
+    const x=pad+i*(cw+1),green=c.close>=c.open,color=green?'#00e87a':'#ff2d55';
+    const bT=sy(Math.max(c.open,c.close)),bB=sy(Math.min(c.open,c.close)),bH=Math.max(1,bB-bT);
+    ctx.strokeStyle=color;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(x+cw/2,sy(c.high));ctx.lineTo(x+cw/2,sy(c.low));ctx.stroke();
+    ctx.fillStyle=color;ctx.fillRect(x,bT,cw,bH);
+  });
+  const r1H=a.tfResults['1H'];
+  if(r1H?.obHigh&&r1H?.obLow){
+    const y1=sy(r1H.obHigh),y2=sy(r1H.obLow);
+    ctx.fillStyle='rgba(255,122,0,0.12)';ctx.fillRect(pad,Math.min(y1,y2),cW,Math.abs(y2-y1));
+    ctx.strokeStyle='rgba(255,122,0,0.5)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+    ctx.strokeRect(pad,Math.min(y1,y2),cW,Math.abs(y2-y1));ctx.setLineDash([]);
+    ctx.fillStyle='#ff7a00';ctx.font='8px Space Mono';ctx.textAlign='right';ctx.fillText('OB',W-pad-2,Math.min(y1,y2)-2);
+  }
+  const price=livePrices[a.id]||a.price;
+  if(price&&price>=minL&&price<=maxH){
+    const py=sy(price);
+    ctx.strokeStyle='rgba(0,200,255,0.7)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.moveTo(pad,py);ctx.lineTo(W-pad,py);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#00c8ff';ctx.font='8px Space Mono';ctx.textAlign='right';ctx.fillText('LIVE '+fmtP(a.id,price),W-pad-2,py-3);
+  }
+  const r1Hc=a.tfResults['1H'];
+  if(r1Hc?.rsi){
+    const rc2=r1Hc.rsiOB?'#ff2d55':r1Hc.rsiOS?'#00e87a':'#9b59ff';
+    ctx.fillStyle=rc2;ctx.font='bold 10px Space Mono';ctx.textAlign='left';
+    ctx.fillText(`RSI: ${r1Hc.rsi.toFixed(1)}${r1Hc.rsiOB?' ⚠SOBRECOMPRADO':r1Hc.rsiOS?' ⚠SOBREVENDIDO':r1Hc.rsiConfirm?' ✓CONFIRMA':''}`,pad+4,H-6);
+  }
+  const sig=calcSignal(a);
+  if(sig.tp>=minL&&sig.tp<=maxH){const py=sy(sig.tp);ctx.strokeStyle='rgba(0,232,122,0.5)';ctx.lineWidth=1;ctx.setLineDash([2,4]);ctx.beginPath();ctx.moveTo(pad,py);ctx.lineTo(W-pad,py);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#00e87a';ctx.font='8px Space Mono';ctx.textAlign='right';ctx.fillText('TP',W-pad-2,py-3)}
+  if(sig.sl>=minL&&sig.sl<=maxH){const py=sy(sig.sl);ctx.strokeStyle='rgba(255,45,85,0.5)';ctx.lineWidth=1;ctx.setLineDash([2,4]);ctx.beginPath();ctx.moveTo(pad,py);ctx.lineTo(W-pad,py);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#ff2d55';ctx.font='8px Space Mono';ctx.textAlign='right';ctx.fillText('SL',W-pad-2,py-3)}
+}
+
+// ═══════════════════════════════════════════════════
+//  FORMATO SEÑAL UNIFICADO — igual en todas las funciones
+// ═══════════════════════════════════════════════════
+function buildSignalMsg(a, sig, etiqueta){
+  const dir = a.masterTrend==='ALCISTA'?'BUY / LONG': a.masterTrend==='BAJISTA'?'SELL / SHORT':'ESPERAR';
+  const emoji = a.masterTrend==='ALCISTA'?'🟢':'🔴';
+  const hora = new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+  const fecha = new Date().toLocaleDateString('es-ES');
+  const razones = a.reasons.slice(0,3).map(r=>`✅ ${r}`).join('\n');
+  // Precio SIEMPRE desde WebSocket Deriv (tiempo real)
+  const precioReal = livePrices[a.id] || a.price;
+  const precioStr = precioReal ? fmtP(a.id, precioReal) : 'Conectando...';
+  // Determinar tipo de entrada
+  const diffPct = precioReal ? Math.abs(sig.entry - precioReal) / precioReal : 0;
+  const esMercado = diffPct < 0.0005;
+  const esLimite  = !esMercado && ((a.masterTrend==='ALCISTA' && sig.entry < precioReal) || (a.masterTrend==='BAJISTA' && sig.entry > precioReal));
+  const tipoEntrada = esMercado ? '🔔 ORDEN A MERCADO' : esLimite ? '📌 ORDEN LÍMITE' : '📍 ZONA DE ENTRADA';
+  const entradaMostrar = fmtP(a.id, sig.entry);
+  // Lotaje — calcular SIEMPRE fresh para evitar valores desactualizados del modal
+  const balInput = parseFloat(document.getElementById('capitalBalance')?.value)||0;
+  const priceLote = livePrices[a.id]||a.price||0;
+  const idLote = (a.id||'').toLowerCase();
+  let slMinRef;
+  if(idLote.includes('boom')||idLote.includes('crash')) slMinRef=priceLote*0.003;
+  else if(idLote.includes('stp'))                       slMinRef=priceLote*0.0026;
+  else if(idLote.startsWith('r_')||idLote.startsWith('1hz')) slMinRef=priceLote*0.0015;
+  else                                                  slMinRef=priceLote*0.002;
+  const slRef  = Math.max(Math.abs(sig.entry-(sig.sl||0)), slMinRef);
+  const slReal = slRef;
+  // pip_value real: Step=$10/punto/lote, resto=$1/punto/lote
+  const pipValTG = idLote.includes('stp') ? 10.0 : 1.0;
+  const slEfecTG = slReal * pipValTG;
+  let loteLinea = '';
+  if(slEfecTG>0){
+    if(balInput>0){
+      const rp = parseFloat(document.getElementById('capitalRiesgo')?.value)||2;
+      const riesgoUSD = balInput * rp / 100;
+      let lotePersonal = Math.floor((riesgoUSD/slEfecTG)*100)/100;
+      lotePersonal = Math.max(0.01, lotePersonal);
+      const riesgoPersonal = lotePersonal * slEfecTG;
+      loteLinea = `💰 Lote sugerido : ${lotePersonal.toFixed(2)}  (riesgo $${riesgoPersonal.toFixed(2)} · ${rp}% de $${balInput})\n`;
+    } else {
+      const l50  = Math.max(0.01, Math.floor(50*0.02/slEfecTG*100)/100);
+      const l100 = Math.max(0.01, Math.floor(100*0.02/slEfecTG*100)/100);
+      const l200 = Math.max(0.01, Math.floor(200*0.02/slEfecTG*100)/100);
+      loteLinea = `💰 Lote ref (2% riesgo):\n   $50→${l50.toFixed(2)} | $100→${l100.toFixed(2)} | $200→${l200.toFixed(2)}\n`;
+    }
+  }
+  const macroStr=`📅 Contexto macro : MES ${a.trenMes==='ALCISTA'?'↑ ALCISTA':a.trenMes==='BAJISTA'?'↓ BAJISTA':'→ NEUTRO'} · SEM ${a.trenSem==='ALCISTA'?'↑ ALCISTA':a.trenSem==='BAJISTA'?'↓ BAJISTA':'→ NEUTRO'}${a.macroAlinea===2?' ✅✅':a.macroAlinea===1?' ✅':' ⚪'}\n`;
+  return `⚡️ ${etiqueta}\n\n📊 ${a.name}\n${emoji} ${dir}\n🏆 Confluencia: ${a.score}%\n${a._fuerzaNivel?'💪 Fuerza        : '+a._fuerzaNivel+' ('+a._fuerzaPts+'/10)\n':''}\n${macroStr}📍 Precio actual : ${precioStr}\n${tipoEntrada}\n🎯 Entrada       : ${entradaMostrar}\n🔴 Stop Loss    : ${fmtP(a.id, sig.sl)}\n${a._fuerzaPts>=8?'🎯 Take Profit ✦':a._fuerzaPts>=6?'🟢 Take Profit ↑':'🟢 Take Profit '} : ${fmtP(a.id, sig.tp)}\n📐 R:R Ratio    : 1:${sig.rr}\n${loteLinea}\n${razones}\n\n⚠️ Gestiona tu propio riesgo — Solo educativo\n📲 @Fernandosan84Alertas\n⏰ ${hora} · ${fecha}`;
+}
+
+async function sendFullSignal(){
+  if(!modalAsset)return;
+  const a=modalAsset,btn=document.getElementById('sendSignalBtn');
+  // Bloquear si no hay precio en vivo
+  const priceVivo = livePrices[a.id]||0;
+  if(!priceVivo||priceVivo<=0){
+    btn.textContent='⏳ Sin precio en vivo — esperando conexión';
+    btn.style.background='#666';
+    setTimeout(()=>{btn.textContent='📲 ENVIAR SEÑAL COMPLETA A TELEGRAM';btn.style.background='';},3000);
+    return;
+  }
+  const sig=calcSignal(a);
+  // Filtro RR mínimo
+  if(parseFloat(sig.rr)<RR_MIN_CANAL){
+    btn.textContent='⚠️ RR insuficiente (mín 1:'+RR_MIN_CANAL+')';
+    btn.style.background='var(--yellow)';
+    setTimeout(()=>{btn.textContent='📲 ENVIAR SEÑAL COMPLETA A TELEGRAM';btn.style.background=''},3000);
+    addChat('apex',`⚠️ Señal bloqueada — RR 1:${sig.rr} menor al mínimo 1:${RR_MIN_CANAL}`);
+    return;
+  }
+  btn.disabled=true;btn.textContent='ENVIANDO...';
+  const msg=buildSignalMsg(a, sig, 'SEÑAL APEX — ENTRADA MANUAL');
+  const ok=await sendTelegram(msg);
+  if(ok){
+    btn.textContent='✅ SEÑAL ENVIADA';btn.style.background='var(--green)';
+    playAlertSound();
+    addToHistorial(a, sig, 'MANUAL');
+    addChat('apex',`📲 Señal enviada al canal: <strong>${a.sym}</strong> | SL:${fmtP(a.id,sig.sl)} TP:${fmtP(a.id,sig.tp)} RR:1:${sig.rr}`)
+  }
+  else{btn.textContent='❌ ERROR — REINTENTAR';btn.style.background='var(--red)'}
+  setTimeout(()=>{btn.disabled=false;btn.textContent='📲 ENVIAR SEÑAL COMPLETA A TELEGRAM';btn.style.background=''},3000);
+}
+
+async function sendBothSignals(){
+  // Envía la señal al canal principal y también al cliente si tiene TG configurado
+  if(!modalAsset) return;
+  const a=modalAsset;
+  const priceVivo=livePrices[a.id]||0;
+  if(!priceVivo||priceVivo<=0){
+    addChat('apex','⏳ Sin precio en vivo — esperando conexión');
+    return;
+  }
+  const sig=calcSignal(a);
+  if(parseFloat(sig.rr)<RR_MIN_CANAL){
+    addChat('apex',`⚠️ Señal bloqueada — RR 1:${sig.rr} menor al mínimo 1:${RR_MIN_CANAL}`);
+    return;
+  }
+  const msg=buildSignalMsg(a,sig,'SEÑAL APEX — ENTRADA MANUAL');
+  // Enviar a canal principal
+  const ok1=await sendTelegram(msg);
+  // Enviar también al TG del cliente si está configurado
+  const tgCli=JSON.parse(localStorage.getItem('apex_tg_cliente')||'{}');
+  let ok2=true;
+  if(tgCli.token&&tgCli.chat){
+    ok2=await sendTelegramTo(tgCli.token,tgCli.chat,msg);
+  }
+  if(ok1){
+    playAlertSound();
+    addToHistorial(a,sig,'MANUAL');
+    addChat('apex',`📲 Señal enviada a canal${ok2?' y cliente':''}: <strong>${a.sym}</strong> | RR:1:${sig.rr}`);
+  } else {
+    addChat('apex','❌ Error enviando señal');
+  }
+}
+
+async function checkAlerts(){
+  if(!analysisResults.length)return;
+  const now=Date.now();
+  for(const a of analysisResults){
+    const kop=`op_${a.id}`,kob=`ob_${a.id}`;
+
+    // ── SEÑAL OPERABLE ──────────────────────────────────────────
+    if(a.operable==='YES'&&!alertsSent[kop]){
+      const priceCheck=livePrices[a.id]||0;
+      if(!priceCheck||priceCheck<=0){ continue; }
+
+      // FILTRO 1 — Score mínimo 88%
+      if((a.score||0) < TG_MIN_SCORE){
+        alertsSent[kop]=now;
+        continue;
+      }
+
+      // FILTRO 2 — RR mínimo 1:2
+      const sig=calcSignal(a);
+      const rrNum=parseFloat(sig.rr);
+      if(rrNum < TG_MIN_RR){
+        alertsSent[kop]=now;
+        addChat('apex',`⚪ ${a.sym} score:${a.score}% RR:1:${sig.rr} — bloqueado (RR<${TG_MIN_RR})`);
+        continue;
+      }
+
+      // FILTRO 3 — Mínimo 3/4 TF operativos alineados
+      const opTFs=[a.tfResults?.['1DÍA'],a.tfResults?.['1H'],a.tfResults?.['M15'],a.tfResults?.['5M']].filter(Boolean);
+      const alin=opTFs.filter(t=>t.trend===a.masterTrend).length;
+      if(alin < TG_MIN_TF_ALIN){
+        alertsSent[kop]=now;
+        addChat('apex',`⚪ ${a.sym} — bloqueado (solo ${alin}/4 TF alineados, mín ${TG_MIN_TF_ALIN})`);
+        continue;
+      }
+
+      // FILTRO 4 — Contexto macro como GUÍA (no bloquea, ajusta score)
+      // Si macro confirma → señal más fuerte
+      // Si macro contrario → requiere score más alto pero no bloquea
+      if(TG_REQUIRE_MACRO){
+        const macroOK=(a.trenSem===a.masterTrend)||(a.trenMes===a.masterTrend);
+        const macroPleno=(a.trenSem===a.masterTrend)&&(a.trenMes===a.masterTrend);
+        if(!macroOK && (a.score||0) < 92){
+          // Macro contrario → necesita score muy alto (92%) para entrar
+          alertsSent[kop]=now;
+          addChat('apex',`⚪ ${a.sym} — macro contrario, score insuficiente (${a.score}%<92% sin macro)`);
+          continue;
+        }
+        // Si macro pleno (MES+SEM) → acepta score desde 85%
+        // Si macro parcial (solo uno) → acepta score desde 88%
+        // Si macro contrario pero score ≥92% → acepta igual
+        if(macroPleno && (a.score||0) >= 85){
+          // OK — confluencia máxima con macro
+        } else if(macroOK && (a.score||0) < TG_MIN_SCORE){
+          alertsSent[kop]=now;
+          continue;
+        }
+      }
+
+      // FILTRO 5 — Bloquear si M15 está en chop/rango
+      if(TG_BLOCK_CHOP && a.chopM15){
+        alertsSent[kop]=now;
+        addChat('apex',`⚪ ${a.sym} — bloqueado (M15 en CHOP — bot v4.1 tampoco entraría)`);
+        continue;
+      }
+
+      // FILTRO 6 — No enviar señales de Rango
+      if(a.masterTrend==='RANGO'){
+        alertsSent[kop]=now;
+        continue;
+      }
+
+      // ✅ Señal contundente — cumple los 6 filtros
+      alertsSent[kop]=now;
+      const msg=buildSignalMsg(a,sig,'✅ SEÑAL CONTUNDENTE — '+alin+'/4 TF · MACRO '+(a.macroAlinea>=2?'✅✅':'✅'));
+      await sendTelegram(msg);
+      playAlertSound();
+      addToHistorial(a,sig,'AUTO');
+      addChat('apex',`📲 <strong>SEÑAL ENVIADA:</strong> ${a.sym} Score:${a.score}% RR:1:${sig.rr} TF:${alin}/4 Macro:${a.macroAlinea>=1?'✅':'⚪'}`);
+    }
+
+    // ── ALERTA ORDER BLOCK — solo si es BOT ALINEADO ──────────
+    const price=livePrices[a.id];
+    if(price&&a.obH&&a.obL&&!alertsSent[kob]&&
+       price>=a.obL*0.9995&&price<=a.obH*1.0005){
+
+      // Solo OB de activos con score alto Y bot alineado
+      if((a.score||0) < TG_MIN_OB_SCORE || !a.botAlineado){
+        alertsSent[kob]=now;
+        continue;
+      }
+
+      alertsSent[kob]=now;
+      const hora=new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+      const fecha=new Date().toLocaleDateString('es-ES');
+      await sendTelegram(`⚡️ PRECIO EN ORDER BLOCK\n🤖 BOT ALINEADO\n\n📊 ${a.name}\n📍 Precio: ${fmtP(a.id,price)}\n📦 OB: ${fmtP(a.id,a.obL)} — ${fmtP(a.id,a.obH)}\n📊 Tendencia: ${a.masterTrend}\n🎯 Confluencia: ${a.score}%\n📅 Macro: ${a.trenMes==='ALCISTA'?'M↑':a.trenMes==='BAJISTA'?'M↓':'M→'} ${a.trenSem==='ALCISTA'?'S↑':a.trenSem==='BAJISTA'?'S↓':'S→'}\n\n📲 @Fernandosan84Alertas\n⏰ ${hora} · ${fecha}`);
+      addChat('apex',`📲 Alerta OB+BOT: <strong>${a.sym}</strong> Score:${a.score}%`);
+    }
+
+    if(alertsSent[kop]&&now-alertsSent[kop]>7200000) delete alertsSent[kop];
+    if(alertsSent[kob]&&now-alertsSent[kob]>7200000) delete alertsSent[kob];
+  }
+}
+setInterval(checkAlerts,30000);
+
+async function testTelegram(){
+  const hora=new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+  const fecha=new Date().toLocaleDateString('es-ES');
+  await sendTelegram(`✅ APEX CONECTADO\n\n🤖 Motor Institucional ICT/SMC activo\n📡 Datos Deriv en tiempo real\n📊 Señales con: SL, TP, R:R, Confluencia\n\n📲 @Fernandosan84Alertas\n⏰ ${hora} · ${fecha}`);
+  addChat('apex','📲 Test enviado al canal.');
+}
+
+function renderRec(a){
+  if(!a)return;
+  const sig=calcSignal(a);
+  const dir=a.masterTrend==='ALCISTA'?'▲ LONG / COMPRA':a.masterTrend==='BAJISTA'?'▼ SHORT / VENTA':'↔ ESPERAR';
+  const dc=a.masterTrend==='ALCISTA'?'var(--green)':a.masterTrend==='BAJISTA'?'var(--red)':'var(--yellow)';
+  // Precio: siempre desde livePrices (WebSocket Deriv)
+  const precioVivo = livePrices[a.id] || a.price;
+  document.getElementById('recName').textContent=`${a.sym} · ${a.name}`;
+  document.getElementById('recDir').textContent=dir;document.getElementById('recDir').style.color=dc;
+  document.getElementById('confBar').style.width=a.score+'%';
+  document.getElementById('confPct').textContent=a.score+'% Confluencia Institucional';
+  // RR visual — marcar si es insuficiente
+  const rrNum=parseFloat(sig.rr);
+  const rrColor=rrNum>=RR_MIN_CANAL?'var(--green)':'var(--red)';
+  const rrAviso=rrNum<RR_MIN_CANAL?` ⚠️ (mín 1:${RR_MIN_CANAL})`:'';
+  document.getElementById('recBullets').innerHTML=a.reasons.map(r=>`✓ <strong>${r}</strong>`).join('<br>')+
+    `<br><br>📍 Precio: <strong id="recPrecioVivo">${precioVivo?fmtP(a.id,precioVivo):'Conectando...'}</strong>`+
+    `<br>🎯 TP: <strong>${fmtP(a.id,sig.tp)}</strong>`+
+    `<br>🛑 SL: <strong>${fmtP(a.id,sig.sl)}</strong>`+
+    `<br>📐 RR: <strong style="color:${rrColor}">1:${sig.rr}${rrAviso}</strong>`;
+}
+function renderDetail(a){
+  if(!a)return;
+  document.getElementById('mtfAsset').textContent=a.sym;
+  const _macroOn = window._apexMacroTFOn !== false;
+  const _tfsToShow = _macroOn ? ['MES','SEM','1DÍA','1H','M15','5M'] : ['1DÍA','1H','M15','5M'];
+  document.getElementById('tfGrid').innerHTML=_tfsToShow.map(tf=>{
+    const r=a.tfResults[tf];
+    const esMacro=(tf==='MES'||tf==='SEM');
+    const esBotTF=(tf==='M15');
+    const label=tf+(esBotTF?' 🤖':esMacro?' 📅':'');
+    const macroClass=esMacro?' macro':'';
+    if(!r)return`<div class="tf-cell${macroClass}"><div class="tf-label">${label}</div><div class="tf-t" style="color:var(--dim)">—</div><div class="tf-s">sin datos</div></div>`;
+    const tc=r.trend==='ALCISTA'?'bull-c':r.trend==='BAJISTA'?'bear-c':'rang-c';
+    const al=r.trend===a.masterTrend?'aligned':r.trend!=='RANGO'?'counter':'';
+    const obStr=r.obHigh?` · OB ${r.obHigh.toFixed?r.obHigh.toFixed(2):r.obHigh}`:'';
+    const fvgStr=r.fvg?' · FVG':'';
+    const sslStr=r.ssl?' · SSL':r.bsl?' · BSL':'';
+    return`<div class="tf-cell ${al}${macroClass}"><div class="tf-label">${label}</div><div class="tf-t ${tc}">${r.trend==='ALCISTA'?'↑':r.trend==='BAJISTA'?'↓':'→'} ${r.trend}</div><div class="tf-s">${r.struct||''}${r.bos?' · BOS':''}${r.choch?' · ChoCH':''}${esMacro?obStr+fvgStr+sslStr:''}</div></div>`;
+  }).join('');
+  document.getElementById('levelsList').innerHTML=`
+    <div class="lv-row"><span class="lv-type">RESISTENCIA/BSL</span><span style="color:var(--red)">${a.resH?.toFixed(4)||'—'}</span></div>
+    <div class="lv-row"><span class="lv-type">ORDER BLOCK ALTO</span><span style="color:var(--orange)">${a.obH?.toFixed(4)||'—'}</span></div>
+    <div class="lv-row"><span class="lv-type">FVG/IMBALANCE</span><span style="color:var(--yellow)">${a.fvgLvl?.toFixed(4)||'—'}</span></div>
+    <div class="lv-row"><span class="lv-type">ORDER BLOCK BAJO</span><span style="color:var(--orange)">${a.obL?.toFixed(4)||'—'}</span></div>
+    <div class="lv-row"><span class="lv-type">SOPORTE/SSL</span><span style="color:var(--green)">${a.supL?.toFixed(4)||'—'}</span></div>`;
+}
+
+// ── SISTEMA TELEGRAM DUAL ──────────────────────────────────────
+// TG_TOKEN / TG_CHAT = canal de Fernando (siempre recibe copia)
+// Cliente configura su propio bot/chat desde el panel de configuración
+
+function getTGCliente(){
+  return {
+    token: localStorage.getItem('apex_tg_token_cli') || '',
+    chat:  localStorage.getItem('apex_tg_chat_cli')  || ''
+  };
+}
+function saveTGCliente(token, chat){
+  localStorage.setItem('apex_tg_token_cli', token);
+  localStorage.setItem('apex_tg_chat_cli',  chat);
+}
+
+// Enviar a un destino específico
+async function sendTelegramTo(token, chat, msg){
+  try{
+    const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chat}&text=${encodeURIComponent(msg)}&parse_mode=HTML`,{method:'GET'});
+    const d = await r.json();
+    return d.ok;
+  }catch(e){ return false; }
+}
+
+// Envío principal: va al cliente Y copia a Fernando
+async function sendTelegram(msg){
+  const cli = getTGCliente();
+  const esAdmin = localStorage.getItem('apex_es_admin')==='1';
+  const nombreCliente = localStorage.getItem('apex_nombre_cliente') || 'Cliente';
+
+  // Si hay token de cliente configurado y NO es admin → enviar al cliente
+  if(!esAdmin && cli.token && cli.chat){
+    await sendTelegramTo(cli.token, cli.chat, msg);
+    // Copia a Fernando con etiqueta del cliente
+    const copia = `👤 <b>COPIA — ${nombreCliente}</b>\n\n` + msg;
+    await sendTelegramTo(TG_TOKEN, TG_CHAT, copia);
+    return true;
+  }
+
+  // Si es admin o no hay config de cliente → enviar solo al canal de Fernando
+  try{
+    const r = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage?chat_id=${TG_CHAT}&text=${encodeURIComponent(msg)}&parse_mode=HTML`,{method:'GET'});
+    const d = await r.json();
+    return d.ok;
+  }catch(e){ return false; }
+}
+function addChat(s,h){const c=document.getElementById('chatMsgs');const d=document.createElement('div');d.className=`cm ${s}`;d.innerHTML=`<div class="cm-from">${s==='apex'?'APEX':'TÚ'}</div>${h}`;c.appendChild(d);c.scrollTop=99999}
+async function sendChat(){
+  const inp=document.getElementById('chatInp');const q=inp.value.trim();if(!q)return;
+  inp.value='';addChat('user',q);
+  const t=document.createElement('div');t.className='cm apex';t.innerHTML=`<div class="cm-from">APEX</div><span style="color:var(--dim);font-style:italic">Analizando...</span>`;
+  document.getElementById('chatMsgs').appendChild(t);document.getElementById('chatMsgs').scrollTop=99999;
+  const top5=analysisResults.slice(0,5).map(a=>{const sig=calcSignal(a);return`${a.sym}:${a.masterTrend} ${a.score}% Entrada:${fmtP(a.id,sig.entry)} TP:${fmtP(a.id,sig.tp)} SL:${fmtP(a.id,sig.sl)}`}).join('\n');
+  const sel=analysisResults[selectedIdx];
+  try{
+    const res=await fetch(WORKER_URL+'/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:`Eres APEX, trader institucional ICT/SMC en sintéticos Deriv.\nTOP: ${top5}\nSELECCIONADO: ${sel?.sym} ${sel?.masterTrend} ${sel?.score}%\nResponde en español, máx 130 palabras, directo y preciso.`,messages:[{role:'user',content:q}]})});
+    const data=await res.json();t.innerHTML=`<div class="cm-from">APEX</div>${data.content?.[0]?.text||'Error.'}`;
+  }catch{t.innerHTML=`<div class="cm-from">APEX</div>Motor IA no disponible temporalmente.`}
+  document.getElementById('chatMsgs').scrollTop=99999;
+}
+function fmtP(sym,price){
+  if(!price||price<=0) return '—';
+  // Boom/Crash — precios grandes, 2 decimales
+  if(sym?.includes('BOOM')||sym?.includes('CRASH')||
+     sym?.includes('BM')||sym?.includes('CR'))
+    return price.toFixed(2);
+  // Volatility clásicos R_ — 2 decimales
+  if(sym?.startsWith('R_')) return price.toFixed(2);
+  // Volatility 1s 1HZ — 2 decimales
+  if(sym?.startsWith('1HZ')) return price.toFixed(2);
+  // Step Index — precio entero grande
+  if(sym?.includes('stpRNG')||sym?.includes('STEP'))
+    return Math.round(price).toLocaleString('es-CO');
+  // Jump Index — 2 decimales
+  if(sym?.startsWith('JD')||sym?.includes('JMP'))
+    return price.toFixed(2);
+  // Range Break — 2 decimales
+  if(sym?.includes('RDB')||sym?.includes('RB'))
+    return price.toFixed(2);
+  // Default
+  return price.toFixed(2);
+}
+function showError(msg){const el=document.getElementById('loginError');el.textContent='⚠ '+msg;el.style.display='block'}
+function setConnectState(l){const b=document.getElementById('connectBtn');b.disabled=l;b.textContent=l?'CONECTANDO...':'CONECTAR Y ESCANEAR'}
+function setWsStatus(t,c){const el=document.getElementById('wsStatus');el.textContent=t;el.className=`ws-status ${c}`}
+function logout(){if(ws)ws.close();location.reload()}
+
+// ═══════════════════════════════════════════════════════
+//  BRIDGE MT5 — Cola de Aprobación + Exportar JSON
+// ═══════════════════════════════════════════════════════
+const BRIDGE_MIN_SCORE=82,BRIDGE_COOLDOWN=600000,BRIDGE_MAX_AGE=300,RR_MIN_CANAL=1.8;
+// ── FILTROS DE CALIDAD v4.1 ──────────────────────────────────────────
+const TG_MIN_SCORE    = 88;
+const TG_MIN_RR       = 2.0;
+const TG_MIN_OB_SCORE = 88;
+const TG_MIN_TF_ALIN  = 3;
+const TG_REQUIRE_MACRO= true;
+const TG_BLOCK_CHOP   = true;
+
+// ── MODO AUTO-APROBACIÓN ─────────────────────────────────────────────
+let bridgeAutoMode = false; // false=manual, true=automático
+function toggleBridgeMode(){
+  bridgeAutoMode=!bridgeAutoMode;
+  const btn=document.getElementById('btnBridgeMode');
+  const ind=document.getElementById('bridgeModeInd');
+  if(bridgeAutoMode){
+    btn.textContent='🤖 MODO: AUTOMÁTICO';
+    btn.style.background='linear-gradient(135deg,#9b59ff,#00c8ff)';
+    btn.style.color='#fff';
+    if(ind){ind.textContent='AUTO — El scanner aprueba y envía al bot sin intervención';ind.style.color='var(--purple)';}
+    addChat('apex','🤖 <strong>Modo AUTOMÁTICO activado</strong> — Las señales que cumplan todos los filtros se enviarán directamente al bot MT5 sin necesidad de aprobar manualmente.');
+  } else {
+    btn.textContent='👤 MODO: MANUAL';
+    btn.style.background='transparent';
+    btn.style.color='var(--text2)';
+    if(ind){ind.textContent='MANUAL — Tú decides qué señales enviar al bot';ind.style.color='var(--dim)';}
+    addChat('apex','👤 <strong>Modo MANUAL activado</strong> — Debes aprobar cada señal antes de enviarla al bot.');
+  }
+  localStorage.setItem('apexBridgeMode', bridgeAutoMode?'auto':'manual');
+}
+// Restaurar modo guardado
+(function restoreBridgeMode(){
+  const saved=localStorage.getItem('apexBridgeMode');
+  if(saved==='auto') setTimeout(()=>{ if(!bridgeAutoMode) toggleBridgeMode(); },1000);
+})();
+let bridgeQueue=[],bridgeLog=[];
+
+const MT5_SYM_MAP={
+  'R_10':'Volatility 10 Index','R_25':'Volatility 25 Index','R_50':'Volatility 50 Index',
+  'R_75':'Volatility 75 Index','R_100':'Volatility 100 Index',
+  '1HZ10V':'Volatility 10 (1s) Index','1HZ25V':'Volatility 25 (1s) Index',
+  '1HZ50V':'Volatility 50 (1s) Index','1HZ75V':'Volatility 75 (1s) Index',
+  '1HZ100V':'Volatility 100 (1s) Index','1HZ150V':'Volatility 150 (1s) Index',
+  '1HZ250V':'Volatility 250 (1s) Index',
+  'BOOM300N':'Boom 300 Index','BOOM500':'Boom 500 Index','BOOM1000':'Boom 1000 Index',
+  'CRASH300N':'Crash 300 Index','CRASH500':'Crash 500 Index','CRASH1000':'Crash 1000 Index',
+  'stpRNG':'Step Index','stpRNG2':'Step Index 200',
+  'stpRNG3':'Step Index 300','stpRNG4':'Step Index 400','stpRNG5':'Step Index 500',
+  'CRASH600':'Crash 600','CRASH900':'Crash 900',
+  'BOOM600':'Boom 600','BOOM900':'Boom 900',
+  'JD10':'Jump 10 Index','JD25':'Jump 25 Index','JD50':'Jump 50 Index',
+  'JD75':'Jump 75 Index','JD100':'Jump 100 Index',
+  'RDBULL100':'Range Break 100 Index','RDBEAR100':'Range Break 100 Index',
+  'RDBULL200':'Range Break 200 Index','RDBEAR200':'Range Break 200 Index',
+};
+
+function bridgeMonitor(){
+  if(!analysisResults||!analysisResults.length)return;
+  analysisResults.forEach(asset=>{
+    if(asset.score<BRIDGE_MIN_SCORE||asset.masterTrend==='RANGO'||asset.operable!=='YES')return;
+    if(bridgeQueue.some(q=>q.id===asset.id))return;
+    const last=bridgeLog.find(l=>l.id===asset.id&&(Date.now()-l.ts)<BRIDGE_COOLDOWN);
+    if(last)return;
+    const sig=calcSignal(asset);
+    if(!sig||!sig.entry||!sig.sl||!sig.tp)return;
+    if(parseFloat(sig.rr)<RR_MIN_CANAL)return;
+    // Filtros extra para auto-aprobación — más estrictos
+    const opTFs=[asset.tfResults?.['1DÍA'],asset.tfResults?.['1H'],asset.tfResults?.['M15'],asset.tfResults?.['5M']].filter(Boolean);
+    const alin=opTFs.filter(t=>t.trend===asset.masterTrend).length;
+    const signal={
+      id:asset.id,sym:MT5_SYM_MAP[asset.id]||asset.name,name:asset.name,
+      dir:asset.masterTrend==='ALCISTA'?'BUY':'SELL',
+      entry:livePrices[asset.id]||sig.entry,
+      sl:sig.sl,tp:sig.tp,score:asset.score,rr:sig.rr,
+      reasons:(asset.reasons||[]).slice(0,3).join(' | ').replace(/[\"\']/g,''),
+      riesgo_pct:parseFloat(document.getElementById('capitalRiesgo')?.value)||2,
+      ts:Math.floor(Date.now()/1000),addedAt:Date.now(),
+      macroAlinea:asset.macroAlinea||0,
+      botAlineado:asset.botAlineado||false,
+      tfAlin:alin
+    };
+    // ── MODO AUTOMÁTICO — aprobar y enviar directo al bot ──────
+    if(bridgeAutoMode){
+      // En auto solo entra si cumple los filtros más estrictos
+      if(asset.score>=TG_MIN_SCORE && alin>=TG_MIN_TF_ALIN && !asset.chopM15){
+        downloadApexJSON([signal]);
+        bridgeLog.push({id:asset.id,ts:Date.now()});
+        const _h=new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+        const _f=new Date().toLocaleDateString('es-ES');
+        const macroStr=`📅 Macro: MES ${asset.trenMes==='ALCISTA'?'↑':asset.trenMes==='BAJISTA'?'↓':'→'} · SEM ${asset.trenSem==='ALCISTA'?'↑':asset.trenSem==='BAJISTA'?'↓':'→'}${asset.macroAlinea===2?' ✅✅':asset.macroAlinea===1?' ✅':' ⚪'}\n`;
+        const tg=`🤖 AUTO-APROBADO → MT5\n\n📊 ${asset.name}\n${signal.dir==='BUY'?'🟢 BUY / LONG':'🔴 SELL / SHORT'}\n🏆 Confluencia: ${asset.score}%\n${macroStr}📍 Entrada: ${fmtP(asset.id,signal.entry)}\n🔴 SL: ${fmtP(asset.id,signal.sl)}\n🟢 TP: ${fmtP(asset.id,signal.tp)}\n📐 R:R: 1:${signal.rr}\n✅ ${signal.reasons}\n\n📲 @Fernandosan84Alertas\n⏰ ${_h} · ${_f}`;
+        sendTelegram(tg);
+        playAlertSound();
+        showBridgeToast(`🤖 AUTO: ${asset.name} ${signal.dir} → MT5`,'var(--purple)');
+        addChat('apex',`🤖 <strong>AUTO-APROBADO:</strong> ${asset.name} ${signal.dir} Score:${asset.score}% TF:${alin}/4`);
+      }
+      return; // en modo auto no agrega a la cola manual
+    }
+    // ── MODO MANUAL — agregar a cola de aprobación ─────────────
+    bridgeQueue.push(signal);
+  });
+  renderBridgePanel();
+}
+
+// ── MT5 Bridge: handle de carpeta (File System Access API) ──
+let _mt5DirHandle=null;
+
+// --- IndexedDB helpers para persistir carpeta MT5 ---
+function _idbOpen(){
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open('apexBridge',1);
+    r.onupgradeneeded=e=>e.target.result.createObjectStore('handles');
+    r.onsuccess=e=>res(e.target.result);r.onerror=rej;});
+}
+async function _idbSave(h){
+  try{const db=await _idbOpen();await new Promise((res,rej)=>{const t=db.transaction('handles','readwrite');const r=t.objectStore('handles').put(h,'mt5folder');r.onsuccess=res;r.onerror=rej;});}catch(e){}
+}
+async function _idbLoad(){
+  try{const db=await _idbOpen();return await new Promise((res,rej)=>{const t=db.transaction('handles','readonly');const r=t.objectStore('handles').get('mt5folder');r.onsuccess=e=>res(e.target.result);r.onerror=rej;});}catch(e){return null;}
+}
+async function restoreMT5Folder(){
+  try{
+    const h=await _idbLoad();
+    if(!h) return;
+    let perm=await h.queryPermission({mode:'readwrite'});
+    if(perm!=='granted') perm=await h.requestPermission({mode:'readwrite'});
+    if(perm==='granted'){
+      _mt5DirHandle=h;
+      const inp=document.getElementById('mt5FolderInput');
+      const st=document.getElementById('botBridgeStatus');
+      if(inp) inp.value=_mt5DirHandle.name;
+      if(st){st.textContent='✅ '+_mt5DirHandle.name+' (auto-restaurada)';st.style.color='var(--green)';}
+    }
+  }catch(e){}
+}
+
+async function selectMT5Folder(){
+  if(!('showDirectoryPicker' in window)){
+    showBridgeToast('⚠ Usa Chrome o Edge para esta función','var(--yellow)');return;
+  }
+  try{
+    _mt5DirHandle=await window.showDirectoryPicker({id:'apex_mt5',mode:'readwrite',startIn:'documents'});
+    await _idbSave(_mt5DirHandle);
+    const inp=document.getElementById('mt5FolderInput');
+    if(inp) inp.value=_mt5DirHandle.name;
+    const st=document.getElementById('botBridgeStatus');
+    if(st){st.textContent='✅ Carpeta: '+_mt5DirHandle.name;st.style.color='var(--green)';}
+    showBridgeToast('✅ Carpeta MT5 configurada: '+_mt5DirHandle.name,'var(--green)');
+    addChat('apex','✅ <strong>Carpeta MT5 configurada</strong><br>📂 '+_mt5DirHandle.name+'<br>Ahora los archivos se guardarán directo — sin descargar.');
+  }catch(e){if(e.name!=='AbortError') showBridgeToast('⚠ Selección cancelada','var(--yellow)');}
+}
+
+function generarBat(){
+  const origen = prompt(
+    'PASO 1 — Pega la ruta de tu carpeta APEX\n(donde el APEX guarda apex_signals.json)\n\nEjemplo: C:\\Users\\TuUsuario\\OneDrive\\Escritorio\\APEX ENTRADAS A BOT',
+    'C:\\Users\\TuUsuario\\OneDrive\\Escritorio\\APEX ENTRADAS A BOT'
+  );
+  if(!origen||origen.trim()==='') return;
+  const mql5 = prompt(
+    'PASO 2 — Pega la ruta de tu carpeta MQL5\\Files\\\n(ábrela desde MT5: Archivo → Abrir carpeta de datos → MQL5 → Files)\n\nEjemplo: C:\\Users\\TuUsuario\\AppData\\Roaming\\MetaQuotes\\Terminal\\[ID]\\MQL5\\Files',
+    'C:\\Users\\TuUsuario\\AppData\\Roaming\\MetaQuotes\\Terminal\\[ID]\\MQL5\\Files'
+  );
+  if(!mql5||mql5.trim()==='') return;
+  const bat = `@echo off
+title APEX Bridge — Copiando señales al MT5
+echo ============================================
+echo  APEX BRIDGE ACTIVO
+echo  Copiando señales al MT5 cada 10 segundos
+echo  NO cierre esta ventana
+echo ============================================
+echo.
+
+set ORIGEN=${origen}\\apex_signals.json
+set DESTINO=${mql5}\\apex_signals.json
+
+:loop
+if exist "%ORIGEN%" (
+    copy /Y "%ORIGEN%" "%DESTINO%" >nul 2>&1
+    echo [%time%] Señal copiada al MT5
+) else (
+    echo [%time%] Esperando señal...
+)
+timeout /t 10 /nobreak >nul
+goto loop
+`;
+  const blob = new Blob([bat],{type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'apex_bridge.bat';
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);URL.revokeObjectURL(a.href);
+  showBridgeToast('✅ apex_bridge.bat descargado','var(--green)');
+  addChat('apex','✅ <strong>apex_bridge.bat generado</strong><br>Ejecútalo con doble click — debe quedar corriendo mientras operas.');
+}
+
+async function downloadApexJSON(signals){
+  // v4.1 — Escribir en Firebase en vez de archivo local
+  // El bot lee directamente desde Firebase — no necesita .bat ni carpeta
+  for(const s of signals){
+    try{
+      const docId=s.id+'_'+Math.floor(Date.now()/1000);
+      const url=`https://firestore.googleapis.com/v1/projects/apex-scanner/databases/(default)/documents/apex_signals?documentId=${docId}`;
+      const body={fields:{
+        sym:       {stringValue: s.sym||s.name},
+        dir:       {stringValue: s.dir},
+        entry:     {doubleValue: parseFloat((s.entry||0).toFixed(5))},
+        sl:        {doubleValue: parseFloat((s.sl||0).toFixed(5))},
+        tp:        {doubleValue: parseFloat((s.tp||0).toFixed(5))},
+        score:     {doubleValue: parseFloat((s.score||0).toFixed(1))},
+        rr:        {stringValue: String(s.rr||'0')},
+        reasons:   {stringValue: (s.reasons||'').substring(0,200)},
+        riesgo_pct:{doubleValue: parseFloat(s.riesgo_pct||2)},
+        ts:        {integerValue: String(s.ts||Math.floor(Date.now()/1000))},
+        consumed:  {booleanValue: false},
+        creado:    {stringValue: new Date().toISOString()}
+      }};
+      const resp=await fetch(url,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(body)
+      });
+      if(resp.ok){
+        const st=document.getElementById('botBridgeStatus');
+        if(st){st.textContent='✅ '+new Date().toLocaleTimeString('es-ES')+' — enviado a Firebase';st.style.color='var(--green)';}
+        showBridgeToast('✅ Señal enviada a Firebase → Bot MT5','var(--green)');
+        addChat('apex',`🔥 <strong>Señal escrita en Firebase</strong> — El bot la leerá en ~60s<br>📊 ${s.sym} ${s.dir} Score:${s.score}% DocID:${docId}`);
+      } else {
+        const err=await resp.text();
+        console.error('Firebase write error:',err);
+        // Fallback a descarga local si Firebase falla
+        _fallbackDownload(signals);
+      }
+    }catch(e){
+      console.error('Firebase error:',e);
+      _fallbackDownload(signals);
+    }
+  }
+}
+
+function _fallbackDownload(signals){
+  // Fallback: descarga el JSON si Firebase falla
+  const json=JSON.stringify(signals.map(s=>({
+    sym:s.sym,dir:s.dir,
+    entry:+((s.entry||0).toFixed(5)),sl:+((s.sl||0).toFixed(5)),tp:+((s.tp||0).toFixed(5)),
+    score:+(s.score||0),reasons:s.reasons,
+    riesgo_pct:+(s.riesgo_pct||2),ts:s.ts
+  })),null,2);
+  if(_mt5DirHandle){
+    _mt5DirHandle.getFileHandle('apex_signals.json',{create:true})
+      .then(fh=>fh.createWritable())
+      .then(w=>{w.write(json);return w.close();})
+      .catch(()=>{});
+    return;
+  }
+  const blob=new Blob([json],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);a.download='apex_signals.json';
+  document.body.appendChild(a);a.click();
+  document.body.removeChild(a);URL.revokeObjectURL(a.href);
+  showBridgeToast('⚠ Firebase falló — descargado como fallback','var(--yellow)');
+}
+
+function approveSignal(idx){
+  const sig=bridgeQueue[idx];if(!sig)return;
+  const age=(Date.now()-sig.addedAt)/1000;
+  if(age>BRIDGE_MAX_AGE){showBridgeToast('⚠ Señal expirada — skip','var(--yellow)');rejectSignal(idx);return;}
+  const lp=livePrices[sig.id];if(lp)sig.entry=lp;
+  const riesgoPctVal = parseFloat(document.getElementById('capitalRiesgo')?.value) || 2;
+  sig.riesgo_pct = riesgoPctVal;
+  downloadApexJSON([sig]);
+  const _h=new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+  const _f=new Date().toLocaleDateString('es-ES');
+  // Buscar el asset completo para datos macro
+  const asset=analysisResults.find(a=>a.id===sig.id)||{};
+  const macroStr=asset.trenMes?`📅 Macro: MES ${asset.trenMes==='ALCISTA'?'↑':asset.trenMes==='BAJISTA'?'↓':'→'} · SEM ${asset.trenSem==='ALCISTA'?'↑':asset.trenSem==='BAJISTA'?'↓':'→'}${(asset.macroAlinea||0)===2?' ✅✅':(asset.macroAlinea||0)===1?' ✅':' ⚪'}\n`:'';
+  const tg=`⚡️ SEÑAL APEX → MT5 APROBADA\n\n📊 ${sig.name}\n${sig.dir==='BUY'?'🟢 BUY / LONG':'🔴 SELL / SHORT'}\n🎯 Confluencia: ${sig.score.toFixed(0)}%\n${macroStr}📍 Precio actual: ${fmtP(sig.id,sig.entry)}\n🔴 Stop Loss   : ${fmtP(sig.id,sig.sl)}\n🟢 Take Profit : ${fmtP(sig.id,sig.tp)}\n📐 R:R Ratio   : 1:${sig.rr}\n\n✅ ${sig.reasons}\n\n⚠️ Gestiona tu propio riesgo — Solo educativo\n📲 @Fernandosan84Alertas\n⏰ ${_h} · ${_f}`;
+  sendTelegram(tg);
+  bridgeLog.push({id:sig.id,ts:Date.now()});
+  bridgeQueue.splice(idx,1);
+  showBridgeToast(`✅ ${sig.name} ${sig.dir} → MT5`,'var(--green)');
+  renderBridgePanel();
+  addChat('apex',`🤖 <strong>${sig.name} ${sig.dir}</strong> aprobado y enviado al bot.`);
+}
+
+function rejectSignal(idx){
+  const sig=bridgeQueue[idx];if(!sig)return;
+  bridgeLog.push({id:sig.id,ts:Date.now()});
+  bridgeQueue.splice(idx,1);renderBridgePanel();
+}
+
+function approveFromModal(){
+  if(!modalAsset)return;
+  const a=modalAsset,sig=calcSignal(a);
+  if(a.score<BRIDGE_MIN_SCORE||a.masterTrend==='RANGO'){
+    showBridgeToast('Score insuficiente para el bot','var(--yellow)');return;
+  }
+  const item={
+    id:a.id,sym:MT5_SYM_MAP[a.id]||a.name,name:a.name,
+    dir:a.masterTrend==='ALCISTA'?'BUY':'SELL',
+    entry:livePrices[a.id]||sig.entry,
+    sl:sig.sl,tp:sig.tp,score:a.score,rr:sig.rr,
+    reasons:(a.reasons||[]).slice(0,3).join(' | ').replace(/[\"\']/g,''),
+    riesgo_pct:parseFloat(document.getElementById('capitalRiesgo')?.value)||2,
+    ts:Math.floor(Date.now()/1000),addedAt:Date.now()
+  };
+  downloadApexJSON([item]);
+  const _h2=new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+  const _f2=new Date().toLocaleDateString('es-ES');
+  const tg=`⚡️ SEÑAL APEX → MT5 APROBADA\n\n📊 ${a.name}\n${item.dir==='BUY'?'🟢 BUY / LONG':'🔴 SELL / SHORT'}\n🎯 Confluencia: ${a.score}%\n📍 Precio actual: ${item.entry.toFixed(5)}\n🔴 Stop Loss   : ${item.sl.toFixed(5)}\n🟢 Take Profit : ${item.tp.toFixed(5)}\n📐 R:R Ratio   : 1:${item.rr}\n\n✅ ${item.reasons}\n\n⚠️ Gestiona tu propio riesgo — Solo educativo\n📲 @Fernandosan84Alertas\n⏰ ${_h2} · ${_f2}`;
+  sendTelegram(tg);
+  playAlertSound();
+  addToHistorial(a, {entry:item.entry,tp:item.tp,sl:item.sl,rr:item.rr}, 'MT5');
+  bridgeLog.push({id:a.id,ts:Date.now()});
+  showBridgeToast(`✅ ${a.name} ${item.dir} → MT5`,'var(--green)');
+  addChat('apex',`🤖 <strong>${a.name} ${item.dir}</strong> aprobado desde modal → bot.`);
+  closeModal();
+}
+
+function expireBridge(){
+  const b=bridgeQueue.length;
+  bridgeQueue=bridgeQueue.filter(s=>(Date.now()-s.addedAt)/1000<=BRIDGE_MAX_AGE);
+  if(bridgeQueue.length<b)renderBridgePanel();
+}
+
+function renderBridgePanel(){
+  expireBridge();
+  const el=document.getElementById('bridgePanel');
+  const ct=document.getElementById('bridgeCount');
+  if(!el)return;
+  if(ct)ct.textContent=bridgeQueue.length+' pendientes';
+  if(!bridgeQueue.length){
+    el.innerHTML=`<div style="color:var(--dim);font-size:10px;letter-spacing:1px;padding:10px 0;text-align:center">MONITOREANDO · Sin señales pendientes<br><span style="font-size:9px">Score ≥${BRIDGE_MIN_SCORE}% + OPERABLE</span></div>`;
+    return;
+  }
+  el.innerHTML=bridgeQueue.map((s,i)=>{
+    const tLeft=Math.max(0,BRIDGE_MAX_AGE-Math.floor((Date.now()-s.addedAt)/1000));
+    const pct=tLeft/BRIDGE_MAX_AGE*100;
+    const dc=s.dir==='BUY'?'var(--green)':'var(--red)';
+    const live=livePrices[s.id];
+    return`<div style="border:1px solid ${s.dir==='BUY'?'rgba(0,232,122,.3)':'rgba(255,45,85,.3)'};padding:12px;margin-bottom:8px;background:rgba(${s.dir==='BUY'?'0,232,122':'255,45,85'},.03);position:relative;overflow:hidden">
+      <div style="position:absolute;bottom:0;left:0;height:2px;background:${dc};width:${pct}%;opacity:.6;transition:width 1s linear"></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <div>
+          <span style="color:var(--white);font-weight:700;font-family:'Syne',sans-serif">${s.name}</span>
+          <span style="color:${dc};margin-left:8px;font-size:11px;font-weight:700">${s.dir}</span>
+          <span style="color:var(--yellow);margin-left:6px;font-size:11px">${s.score.toFixed(0)}%</span>
+        </div>
+        <span style="color:var(--dim);font-size:9px">${tLeft}s</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:8px">
+        <div style="background:var(--panel2);padding:5px;text-align:center"><div style="font-size:8px;color:var(--dim)">LIVE</div><div style="font-size:10px;color:var(--accent);font-weight:700">${live?fmtP(s.id,live):'—'}</div></div>
+        <div style="background:var(--panel2);padding:5px;text-align:center"><div style="font-size:8px;color:var(--dim)">SL</div><div style="font-size:10px;color:var(--red);font-weight:700">${fmtP(s.id,s.sl)}</div></div>
+        <div style="background:var(--panel2);padding:5px;text-align:center"><div style="font-size:8px;color:var(--dim)">TP</div><div style="font-size:10px;color:var(--green);font-weight:700">${fmtP(s.id,s.tp)}</div></div>
+        <div style="background:var(--panel2);padding:5px;text-align:center"><div style="font-size:8px;color:var(--dim)">RR</div><div style="font-size:10px;color:var(--yellow);font-weight:700">1:${s.rr}</div></div>
+      </div>
+      <div style="font-size:9px;color:var(--text2);line-height:1.6;margin-bottom:8px;border-left:2px solid ${dc};padding-left:8px">${s.reasons}</div>
+      <div style="display:flex;gap:6px">
+        <button onclick="approveSignal(${i})" style="flex:1;background:${dc};border:none;color:var(--bg);padding:8px;font-family:'Syne',sans-serif;font-weight:800;font-size:10px;letter-spacing:2px;cursor:pointer">✅ APROBAR → MT5</button>
+        <button onclick="rejectSignal(${i})" style="width:44px;background:transparent;border:1px solid var(--border2);color:var(--dim);padding:8px;cursor:pointer;font-size:13px">✗</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showBridgeToast(msg,color){
+  const t=document.getElementById('bridgeToast');if(!t)return;
+  t.textContent=msg;t.style.background=color||'var(--green)';
+  t.style.color=color==='var(--yellow)'?'#000':'var(--bg)';
+  t.style.display='block';t.style.opacity='1';
+  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.style.display='none',400);},3500);
+}
+
+setInterval(()=>{
+  expireBridge();
+  bridgeQueue.forEach(s=>{const lp=livePrices[s.id];if(lp)s.entry=lp;});
+  if(bridgeQueue.length>0)renderBridgePanel();
+},1000);
+// ═══════════════════════════════════════════════════════
+//  AUTO-SCAN
+// ═══════════════════════════════════════════════════════
+let autoScanInterval=null, autoScanSeconds=0, autoScanTotal=600;
+
+function setAutoScan(){
+  const val=parseInt(document.getElementById('autoScanSel').value);
+  if(autoScanInterval){clearInterval(autoScanInterval);autoScanInterval=null}
+  if(val===0){document.getElementById('autoScanCountdown').textContent='—';return}
+  autoScanTotal=val*60; autoScanSeconds=autoScanTotal;
+  updateAutoCountdown();
+  autoScanInterval=setInterval(()=>{
+    autoScanSeconds--;
+    updateAutoCountdown();
+    if(autoScanSeconds<=0){
+      autoScanSeconds=autoScanTotal;
+      if(!scanInProgress) runFullScan();
+    }
+  },1000);
+}
+
+function updateAutoCountdown(){
+  const el=document.getElementById('autoScanCountdown');
+  if(!el)return;
+  const m=Math.floor(autoScanSeconds/60),s=autoScanSeconds%60;
+  el.textContent=`${m}:${s.toString().padStart(2,'0')}`;
+  el.style.color=autoScanSeconds<=30?'var(--yellow)':'var(--accent)';
+}
+
+// Arrancar auto-scan por defecto en 10 min al iniciar
+setTimeout(()=>setAutoScan(),3000);
+
+// ═══════════════════════════════════════════════════════
+//  SONIDO DE ALERTA
+// ═══════════════════════════════════════════════════════
+function playAlertSound(){
+  try{
+    const ctx=new(window.AudioContext||window.webkitAudioContext)();
+    // Tres beeps ascendentes
+    [[0,523],[0.15,659],[0.3,784]].forEach(([t,f])=>{
+      const o=ctx.createOscillator(),g=ctx.createGain();
+      o.connect(g);g.connect(ctx.destination);
+      o.frequency.value=f; o.type='sine';
+      g.gain.setValueAtTime(0,ctx.currentTime+t);
+      g.gain.linearRampToValueAtTime(0.3,ctx.currentTime+t+0.05);
+      g.gain.linearRampToValueAtTime(0,ctx.currentTime+t+0.2);
+      o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+0.25);
+    });
+  }catch(e){}
+}
+
+// ═══════════════════════════════════════════════════════
+//  HISTORIAL DEL DÍA
+// ═══════════════════════════════════════════════════════
+let historialHoy=[];
+
+function addToHistorial(asset, sig, tipo){
+  const hora=new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+  const item={
+    id: Date.now(),
+    sym: asset.sym, name: asset.name,
+    dir: asset.masterTrend==='ALCISTA'?'BUY':'SELL',
+    score: asset.score,
+    entry: sig.entry, tp: sig.tp, sl: sig.sl, rr: sig.rr,
+    hora, tipo, resultado: null // null=pendiente, 'WIN', 'LOSS'
+  };
+  historialHoy.unshift(item);
+  renderHistorial();
+}
+
+function marcarResultado(id, resultado){
+  const item=historialHoy.find(h=>h.id===id);
+  if(item){
+    item.resultado=item.resultado===resultado?null:resultado; // toggle
+    renderHistorial();
+  }
+}
+
+function clearHistorial(){
+  if(confirm('¿Limpiar historial del día?')){historialHoy=[];renderHistorial()}
+}
+
+function toggleHistorial(){
+  const p=document.getElementById('historialPanel');
+  p.style.display=p.style.display==='none'?'block':'none';
+  if(p.style.display==='block'){
+    document.getElementById('histFecha').textContent=new Date().toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
+    renderHistorial();
+  }
+}
+
+function renderHistorial(){
+  const wins=historialHoy.filter(h=>h.resultado==='WIN').length;
+  const losses=historialHoy.filter(h=>h.resultado==='LOSS').length;
+  document.getElementById('histTotal').textContent=historialHoy.length;
+  document.getElementById('histWin').textContent=wins;
+  document.getElementById('histLoss').textContent=losses;
+  const el=document.getElementById('histList');
+  if(!historialHoy.length){
+    el.innerHTML='<div style="color:var(--dim);font-size:10px;text-align:center;padding:20px;letter-spacing:2px">Sin señales enviadas hoy</div>';
+    return;
+  }
+  el.innerHTML=historialHoy.map(h=>{
+    const dc=h.dir==='BUY'?'var(--green)':'var(--red)';
+    const res=h.resultado==='WIN'?'var(--green)':h.resultado==='LOSS'?'var(--red)':'var(--dim)';
+    const resIcon=h.resultado==='WIN'?'✅':h.resultado==='LOSS'?'❌':'⏳';
+    return`<div style="border:1px solid var(--border);padding:10px 12px;margin-bottom:6px;background:var(--panel2);border-left:3px solid ${dc}">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <div>
+          <span style="font-family:'Syne',sans-serif;font-weight:700;color:var(--white)">${h.sym}</span>
+          <span style="color:${dc};margin-left:8px;font-size:11px;font-weight:700">${h.dir}</span>
+          <span style="color:var(--yellow);margin-left:6px;font-size:10px">${h.score}%</span>
+          <span style="color:var(--dim);margin-left:6px;font-size:9px">${h.tipo}</span>
+        </div>
+        <span style="color:var(--dim);font-size:10px">${h.hora}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:8px;font-size:10px">
+        <div style="background:var(--bg);padding:4px;text-align:center"><div style="font-size:8px;color:var(--dim)">SL</div><span style="color:var(--red)">${fmtP(null,h.sl)}</span></div>
+        <div style="background:var(--bg);padding:4px;text-align:center"><div style="font-size:8px;color:var(--dim)">TP</div><span style="color:var(--green)">${fmtP(null,h.tp)}</span></div>
+        <div style="background:var(--bg);padding:4px;text-align:center"><div style="font-size:8px;color:var(--dim)">RR</div><span style="color:var(--yellow)">1:${h.rr}</span></div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button onclick="marcarResultado(${h.id},'WIN')" style="flex:1;padding:5px;background:${h.resultado==='WIN'?'var(--green)':'transparent'};border:1px solid var(--green);color:${h.resultado==='WIN'?'var(--bg)':'var(--green)'};font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;cursor:pointer">✅ WIN</button>
+        <button onclick="marcarResultado(${h.id},'LOSS')" style="flex:1;padding:5px;background:${h.resultado==='LOSS'?'var(--red)':'transparent'};border:1px solid var(--red);color:${h.resultado==='LOSS'?'var(--bg)':'var(--red)'};font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;cursor:pointer">❌ LOSS</button>
+        <span style="font-size:18px;align-self:center">${resIcon}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+restoreMT5Folder();
+
+window.connect=connect;window.logout=logout;window.runFullScan=runFullScan;
+window.toggleHistorial=toggleHistorial;window.testTelegram=testTelegram;
+window.sendChat=sendChat;window.setAutoScan=setAutoScan;
+window.closeModal=closeModal;window.closeModalOutside=closeModalOutside;
+window.openModal=openModal;window.selectRow=selectRow;
+window.sendFullSignal=sendFullSignal;window.sendBothSignals=sendBothSignals;
+window.approveFromModal=approveFromModal;window.calcularLote=calcularLote;
+window.selectMT5Folder=selectMT5Folder;window.activarEnBot=activarEnBot;
+window.generarBat=generarBat;window.abrirConfigTelegram=abrirConfigTelegram;
+window.cerrarConfigTelegram=cerrarConfigTelegram;
+window.guardarTGCliente=guardarTGCliente;window.testTGCliente=testTGCliente;
+
+</script>
+<!-- PANEL HISTORIAL DEL DÍA -->
+<div id="historialPanel" style="display:none;position:fixed;top:60px;right:20px;width:420px;max-height:80vh;background:var(--panel);border:1px solid var(--border2);z-index:400;overflow:hidden;box-shadow:0 0 40px rgba(0,0,0,.6)">
+  <div style="background:linear-gradient(135deg,rgba(0,200,255,.08),rgba(155,89,255,.05));border-bottom:1px solid var(--border2);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:relative">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)"></div>
+    <div>
+      <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:var(--white);letter-spacing:3px">HISTORIAL HOY</div>
+      <div style="font-size:9px;color:var(--dim);letter-spacing:2px;margin-top:2px" id="histFecha">—</div>
+    </div>
+    <div style="display:flex;gap:16px;align-items:center">
+      <div style="text-align:center">
+        <div style="font-size:8px;color:var(--dim);letter-spacing:2px">ENVIADAS</div>
+        <div style="font-size:18px;font-weight:700;color:var(--accent)" id="histTotal">0</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:8px;color:var(--dim);letter-spacing:2px">WIN</div>
+        <div style="font-size:18px;font-weight:700;color:var(--green)" id="histWin">0</div>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:8px;color:var(--dim);letter-spacing:2px">LOSS</div>
+        <div style="font-size:18px;font-weight:700;color:var(--red)" id="histLoss">0</div>
+      </div>
+      <button onclick="toggleHistorial()" style="background:transparent;border:1px solid var(--border2);color:var(--dim);width:28px;height:28px;cursor:pointer;font-size:14px">✕</button>
+    </div>
+  </div>
+  <div style="padding:8px 12px;border-bottom:1px solid var(--border);display:flex;gap:6px">
+    <button onclick="clearHistorial()" style="background:transparent;border:1px solid var(--border2);color:var(--dim);padding:5px 12px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;cursor:pointer">🗑 LIMPIAR</button>
+    <div style="font-size:9px;color:var(--dim);align-self:center;margin-left:4px">Click en señal para marcar WIN/LOSS</div>
+  </div>
+  <div id="histList" style="overflow-y:auto;max-height:calc(80vh - 130px);padding:8px 12px">
+    <div style="color:var(--dim);font-size:10px;text-align:center;padding:20px;letter-spacing:2px">Sin señales enviadas hoy</div>
+  </div>
+</div>
+
+<!-- MODAL CONFIGURACIÓN TELEGRAM CLIENTE -->
+<div id="modalTGConfig" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(4,6,13,.97);align-items:center;justify-content:center;flex-direction:column">
+  <div style="width:480px;background:var(--panel);border:1px solid var(--border2);padding:40px;position:relative;box-shadow:0 0 60px rgba(0,200,255,.1)">
+    <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)"></div>
+    <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:20px;letter-spacing:4px;color:var(--accent);margin-bottom:4px">📲 MI TELEGRAM</div>
+    <div style="font-size:9px;color:var(--dim);letter-spacing:3px;margin-bottom:32px">CONFIGURACIÓN PERSONAL DE NOTIFICACIONES</div>
+
+    <div style="background:rgba(0,200,255,.04);border:1px solid var(--border2);padding:14px;margin-bottom:24px;font-size:10px;color:var(--text);line-height:1.9">
+      <strong style="color:var(--accent)">¿Cómo obtener mis datos?</strong><br>
+      1. Busca <strong style="color:var(--white)">@BotFather</strong> en Telegram → crea un bot → copia el token<br>
+      2. Busca <strong style="color:var(--white)">@userinfobot</strong> en Telegram → te da tu Chat ID<br>
+      3. Pega ambos aquí y guarda
+    </div>
+
+    <div style="margin-bottom:16px">
+      <div style="font-size:9px;letter-spacing:2px;color:var(--dim);margin-bottom:6px">TOKEN DE TU BOT</div>
+      <input id="tgCliToken" style="width:100%;background:rgba(0,200,255,.03);border:1px solid var(--border2);padding:12px 14px;color:var(--white);font-family:'Space Mono',monospace;font-size:11px;outline:none;letter-spacing:1px" placeholder="Ej: 123456789:AABBccDDeeFFggHH...">
+    </div>
+    <div style="margin-bottom:16px">
+      <div style="font-size:9px;letter-spacing:2px;color:var(--dim);margin-bottom:6px">TU CHAT ID</div>
+      <input id="tgCliChat" style="width:100%;background:rgba(0,200,255,.03);border:1px solid var(--border2);padding:12px 14px;color:var(--white);font-family:'Space Mono',monospace;font-size:11px;outline:none;letter-spacing:1px" placeholder="Ej: 123456789">
+    </div>
+    <div style="margin-bottom:24px">
+      <div style="font-size:9px;letter-spacing:2px;color:var(--dim);margin-bottom:6px">TU NOMBRE (para identificarte)</div>
+      <input id="tgCliNombre" style="width:100%;background:rgba(0,200,255,.03);border:1px solid var(--border2);padding:12px 14px;color:var(--white);font-family:'Space Mono',monospace;font-size:11px;outline:none;letter-spacing:1px" placeholder="Ej: Juan, Maria...">
+    </div>
+
+    <div id="tgCliMsg" style="display:none;font-size:10px;padding:8px;margin-bottom:12px;text-align:center;letter-spacing:1px"></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button onclick="guardarTGCliente()" style="background:linear-gradient(135deg,var(--accent),var(--purple));border:none;color:var(--bg);padding:14px;font-family:'Syne',sans-serif;font-weight:800;font-size:11px;letter-spacing:3px;cursor:pointer">💾 GUARDAR</button>
+      <button onclick="testTGCliente()" style="background:transparent;border:1px solid var(--accent);color:var(--accent);padding:14px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;cursor:pointer">📲 PROBAR</button>
+    </div>
+    <button onclick="cerrarConfigTelegram()" style="width:100%;margin-top:10px;background:transparent;border:1px solid var(--border2);color:var(--dim);padding:12px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;cursor:pointer">✕ CERRAR</button>
+  </div>
+</div>
+
+<script>
+function abrirConfigTelegram(){
+  const cli = getTGCliente();
+  document.getElementById('tgCliToken').value = cli.token;
+  document.getElementById('tgCliChat').value  = cli.chat;
+  document.getElementById('tgCliNombre').value = localStorage.getItem('apex_nombre_cliente') || '';
+  const m = document.getElementById('modalTGConfig');
+  m.style.display='flex';
+}
+function cerrarConfigTelegram(){
+  document.getElementById('modalTGConfig').style.display='none';
+}
+function guardarTGCliente(){
+  const token  = document.getElementById('tgCliToken').value.trim();
+  const chat   = document.getElementById('tgCliChat').value.trim();
+  const nombre = document.getElementById('tgCliNombre').value.trim();
+  const msg    = document.getElementById('tgCliMsg');
+  if(!token || !chat){
+    msg.style.display='block';
+    msg.style.color='var(--red)';
+    msg.style.background='rgba(255,45,85,.05)';
+    msg.style.border='1px solid rgba(255,45,85,.2)';
+    msg.textContent='⚠ Ingresa el token y el chat ID';
+    return;
+  }
+  saveTGCliente(token, chat);
+  if(nombre) localStorage.setItem('apex_nombre_cliente', nombre);
+  msg.style.display='block';
+  msg.style.color='var(--green)';
+  msg.style.background='rgba(0,232,122,.05)';
+  msg.style.border='1px solid rgba(0,232,122,.2)';
+  msg.textContent='✅ Configuración guardada correctamente';
+  // Actualizar botón header para indicar que está configurado
+  const btn = document.getElementById('btnConfigTG');
+  if(btn){ btn.textContent='✅ MI TELEGRAM'; btn.style.borderColor='var(--green)'; btn.style.color='var(--green)'; }
+  setTimeout(()=>{ msg.style.display='none'; },3000);
+}
+async function testTGCliente(){
+  const token = document.getElementById('tgCliToken').value.trim();
+  const chat  = document.getElementById('tgCliChat').value.trim();
+  const msg   = document.getElementById('tgCliMsg');
+  if(!token || !chat){
+    msg.style.display='block';
+    msg.style.color='var(--red)';
+    msg.textContent='⚠ Primero ingresa el token y chat ID';
+    return;
+  }
+  const hora = new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+  const ok = await sendTelegramTo(token, chat, `✅ APEX — Telegram Configurado\n\n🤖 Tu canal de señales está activo\n📲 Las señales llegarán solo a ti\n⏰ ${hora}`);
+  msg.style.display='block';
+  if(ok){
+    msg.style.color='var(--green)';
+    msg.style.background='rgba(0,232,122,.05)';
+    msg.style.border='1px solid rgba(0,232,122,.2)';
+    msg.textContent='✅ Mensaje de prueba enviado a tu Telegram';
+  } else {
+    msg.style.color='var(--red)';
+    msg.style.background='rgba(255,45,85,.05)';
+    msg.style.border='1px solid rgba(255,45,85,.2)';
+    msg.textContent='❌ Error — Verifica el token y chat ID';
+  }
+}
+// Al cargar, actualizar botón si ya está configurado
+(function checkTGConfig(){
+  const cli = getTGCliente();
+  if(cli.token && cli.chat){
+    const btn = document.getElementById('btnConfigTG');
+    if(btn){ btn.textContent='✅ MI TELEGRAM'; btn.style.borderColor='var(--green)'; btn.style.color='var(--green)'; }
+  }
+})();
+</script>
+
+</script>
+
+<script>
+// Puente para llamar connect() cuando esté disponible
+function _apexConnect(){
+  var intentos = 0;
+  var esperar = setInterval(function(){
+    if(typeof window.connect === 'function'){
+      clearInterval(esperar);
+      window.connect();
+    } else if(++intentos > 50){
+      clearInterval(esperar);
+      var err = document.getElementById('loginError');
+      if(err){ err.style.display='block'; err.textContent='Error de carga. Recarga la página.'; }
+    }
+  }, 100);
+}
+</script>
+
+<!-- ═══════════════════════════════════════════
+     BOTTOM NAV MÓVIL — Tabs de sección
+     ═══════════════════════════════════════════ -->
+<div id="mobileNav">
+  <button class="mnav-btn active" id="mnav-scanner" onclick="mobTab('scanner')">
+    <span class="micon">📡</span>SCANNER
+  </button>
+  <button class="mnav-btn" id="mnav-analisis" onclick="mobTab('analisis')">
+    <span class="micon">📊</span>ANÁLISIS
+  </button>
+  <button class="mnav-btn" id="mnav-chat" onclick="mobTab('chat')">
+    <span class="micon">💬</span>CONSULTOR
+  </button>
+</div>
+
+<script>
+// ── Mobile Tab Navigation ───────────────────────────────
+(function(){
+  var tabs = {
+    scanner: '.scanner-panel',
+    analisis: '.right-top',
+    chat: '.right-bottom'
+  };
+  window.mobTab = function(tab){
+    // Sólo actúa en móvil
+    if(window.innerWidth > 760) return;
+    // Ocultar todos
+    Object.values(tabs).forEach(function(sel){
+      var el = document.querySelector(sel);
+      if(el) el.classList.remove('mob-active');
+    });
+    // Mostrar el seleccionado
+    var target = document.querySelector(tabs[tab]);
+    if(target) target.classList.add('mob-active');
+    // Actualizar botones
+    document.querySelectorAll('.mnav-btn').forEach(function(b){ b.classList.remove('active'); });
+    var btn = document.getElementById('mnav-'+tab);
+    if(btn) btn.classList.add('active');
+    // Scroll al tope del panel
+    if(target) target.scrollTop = 0;
+  };
+  // Activar scanner por defecto cuando el app se muestra
+  function initMobNav(){
+    if(window.innerWidth <= 760){
+      mobTab('scanner');
+    }
+  }
+  // Observar cuando #app se hace visible
+  var appEl = document.getElementById('app');
+  if(appEl){
+    var obs = new MutationObserver(function(muts){
+      muts.forEach(function(m){
+        if(appEl.style.display !== 'none') initMobNav();
+      });
+    });
+    obs.observe(appEl, {attributes:true, attributeFilter:['style']});
+  }
+  // También al resize
+  window.addEventListener('resize', function(){
+    if(window.innerWidth > 760){
+      // Restaurar layout desktop
+      document.querySelectorAll('.scanner-panel,.right-top,.right-bottom').forEach(function(el){
+        el.classList.remove('mob-active');
+      });
+    } else {
+      initMobNav();
+    }
+  });
+})();
+</script>
+
+<script>
+// ── PWA Service Worker ─────────────────────────────────
+// ── Toggle MN/W1 en panel lateral ─────────────────────────
+window._apexMacroTFOn = true;
+function toggleMacroTF(){
+  window._apexMacroTFOn = !window._apexMacroTFOn;
+  const btn = document.getElementById('btnMacroToggle');
+  if(btn){
+    btn.textContent = window._apexMacroTFOn ? 'MN + W1 ON' : 'MN + W1 OFF';
+    btn.className = window._apexMacroTFOn ? 'btn-macro-toggle' : 'btn-macro-toggle off';
+  }
+  // Ajustar columnas del grid según cuántos TF se muestran
+  const grid = document.getElementById('tfGrid');
+  if(grid) grid.style.gridTemplateColumns = window._apexMacroTFOn ? 'repeat(3,1fr)' : 'repeat(4,1fr)';
+  // Re-renderizar con el asset actualmente seleccionado
+  const a = analysisResults[selectedIdx] || analysisResults[0];
+  if(a){ renderDetail(a); }
+}
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js')
+      .then(function(reg){
+        console.log('APEX SW registrado:', reg.scope);
+      })
+      .catch(function(err){
+        console.log('SW error:', err);
+      });
+  });
+}
+
+// ── Prompt instalar app en Android ─────────────────────
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault();
+  deferredPrompt = e;
+  // Mostrar botón de instalación si no está instalada
+  const btn = document.getElementById('installBtn');
+  if(btn) btn.style.display = 'block';
+});
+window.addEventListener('appinstalled', function(){
+  const btn = document.getElementById('installBtn');
+  if(btn) btn.style.display = 'none';
+  deferredPrompt = null;
+});
+window.installApp = function(){
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function(r){
+    deferredPrompt = null;
+  });
+};
+</script>
+
+<!-- ═══ VERIFICAR ACTUALIZACIÓN DEL BOT ═══ -->
+<script>
+const BOT_VER_URL="https://raw.githubusercontent.com/fernandosan84/apex-updates/main/version.json";
+const BOT_VER_KEY="apex_bot_ver_vista";
+
+async function checkBotUpdate(){
+  try{
+    const r=await fetch(BOT_VER_URL+"?t="+Date.now());
+    if(!r.ok) return;
+    const d=await r.json();
+    const ver=d.version||"";
+    const nota=d.nota||"Nueva versión lista para descargar";
+    if(!ver) return;
+    // Comparar con version descargada — NO con version vista
+    const verDescargada=localStorage.getItem(BOT_VER_KEY)||"";
+    if(ver!==verDescargada){
+      const bar=document.getElementById("updateBar");
+      if(bar){
+        document.getElementById("updateBarTitle").textContent="APEX BOT v"+ver+" PARA MT5 — ACTUALIZACIÓN DISPONIBLE";
+        document.getElementById("updateBarSub").textContent=nota||"Nueva versión lista — Descárgala ahora e instálala en tu MT5";
+        bar.style.display="flex";
+        localStorage.setItem("apex_bot_ver_pendiente",ver);
+      }
+    } else {
+      // Version ya descargada — ocultar barra
+      const bar=document.getElementById("updateBar");
+      if(bar) bar.style.display="none";
+    }
+  }catch(e){}
+}
+
+// Si viene de vuelta de descarga con exito — marcar como vista
+const urlParams=new URLSearchParams(window.location.search);
+if(urlParams.get("descargado")==="ok"){
+  const vp=localStorage.getItem("apex_bot_ver_pendiente")||"";
+  if(vp){
+    localStorage.setItem(BOT_VER_KEY,vp);
+    localStorage.removeItem("apex_bot_ver_pendiente");
+  }
+  window.history.replaceState({},document.title,window.location.pathname);
+}
+
+// El boton NO marca como vista — solo navega a la pagina de descarga
+// La barra desaparece solo cuando el cliente confirma la descarga exitosa
+
+checkBotUpdate();
+setInterval(checkBotUpdate,30*60*1000);
+</script>
+
+</body>
+</html>
